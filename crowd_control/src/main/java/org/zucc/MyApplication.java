@@ -18,7 +18,7 @@ public class MyApplication {
         SpringApplication springApplication = new SpringApplication(MyApplication.class);
         ConfigurableApplicationContext configurableApplicationContext = springApplication.run(args);
         // 是否打印beanName
-        getBeanName(configurableApplicationContext, true);
+        getBeanName(configurableApplicationContext, false);
         // websocket 中需要使用容器来获取bean
         MessageWS.setApplicationContext(configurableApplicationContext);
     }

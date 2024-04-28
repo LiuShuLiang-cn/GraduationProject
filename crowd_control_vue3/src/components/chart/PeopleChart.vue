@@ -11,9 +11,9 @@ const props = defineProps({
 })
 let intervalId: number
 onMounted(() => {
-    initChart1();
+    initChart();
     intervalId = setInterval(() => {
-        initChart1()
+        initChart()
     }, 5000);
 
 });
@@ -109,7 +109,7 @@ interface NumberOfPeople {
     status: string,
     systemName: string
 }
-async function initChart1() {
+async function initChart() {
     var x: string[] = []
     var y: peopleChart[] = []
     var myChart = echarts.init(chartDom.value);

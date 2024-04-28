@@ -11,7 +11,7 @@
             <PeopleChart :systemId="systemId" :role="role" />
         </div>
         <div class="section">
-            <PeopleChart :systemId="systemId" :role="role" />
+            <DeployChart :systemId="systemId" :role="role" />
         </div>
     </el-aside>
 </template>
@@ -19,6 +19,7 @@
 import { vMiniWeatherIcon } from 'vue3-mini-weather'
 import { onMounted, ref, defineProps } from 'vue'
 import PeopleChart from "@/components/chart/PeopleChart.vue";
+import DeployChart from './chart/DeployChart.vue';
 const weather = ref({
     cityName: "西湖",
     weather: "晴天",
