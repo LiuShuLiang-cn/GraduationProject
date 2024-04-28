@@ -8,10 +8,10 @@
                 }}</span>
         </div>
         <div class="section">
-            <PeopleChart :systemId="systemId" :role="role" :chartType="'1'" />
+            <PeopleChart :systemId="systemId" :role="role" />
         </div>
         <div class="section">
-            <PeopleChart :systemId="systemId" :role="role" :chartType="'2'" />
+            <PeopleChart :systemId="systemId" :role="role" />
         </div>
     </el-aside>
 </template>

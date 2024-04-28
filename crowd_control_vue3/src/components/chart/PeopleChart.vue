@@ -1,6 +1,5 @@
 <template>
-    <div class="box" ref="chartDom" v-if="props.chartType == '1'"></div>
-    <div class="box" ref="chartDom" v-if="props.chartType == '2'"></div>
+    <div class="box" ref="chartDom"></div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted, defineProps, onUnmounted } from "vue";
@@ -8,8 +7,7 @@ import * as echarts from "echarts";
 let chartDom = ref(null); //注意变量名 和 ref名字要对应
 const props = defineProps({
     systemId: String,
-    role: String,
-    chartType: String
+    role: String
 })
 let intervalId: number
 onMounted(() => {
@@ -131,9 +129,6 @@ async function initChart1() {
     option.value.series[0].data = y
     option && myChart.setOption(option.value);
 }
-
-
-
 </script>
 
 <style scoped>
