@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.zucc.dao.DeployDao;
 import org.zucc.dao.SystemDao;
 import org.zucc.entity.Deploy;
+import org.zucc.entity.NumberOfPeople;
 import org.zucc.entity.vo.DeployVo;
 import org.zucc.service.DeployService;
+import org.zucc.service.NumberOfPeopleService;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -20,7 +23,11 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
     @Resource
     private DeployDao deployDao;
     @Resource
-    private RedisTemplate<String, List<Deploy>> redisTemplate;
+    private RedisTemplate<String, List<Object>> redisTemplate;
+    @Resource
+    private NumberOfPeopleService numberOfPeopleService;
+    @Resource
+    private SystemDao systemDao;
 
     @Override
     public void initDeploy(String systemName) {
@@ -64,11 +71,10 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
                 baseMapper.insert(deploy);
             }
     }
-    @Resource
-    private SystemDao systemDao;
+
     @Override
     public void directivesDeploy(DeployVo deployVo) {
-        String systemName=systemDao.selectById(deployVo.getSystemId()).getSystemName();
+        String systemName = systemDao.selectById(deployVo.getSystemId()).getSystemName();
         deployVo.setSystemName(systemName);
         /*
         部署人员
@@ -89,8 +95,36 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
         }
 
         List<Deploy> deploys = deployDao.getNumBySys(systemName);
-        redisTemplate.opsForValue().set(systemName + "_Deploys", deploys);
+        redisTemplate.opsForValue().set(systemName + "_Deploys", Collections.singletonList(deploys));
         log.info("部署了" + deployVo.getNum() + "人");
+    }
+    @Override
+    public String transPeople(String systemId, String from, String to, int number) {
+        String systemName = systemDao.selectById(systemId).getSystemName();
+        QueryWrapper<NumberOfPeople> wrapper = new QueryWrapper<>();
+        wrapper.eq("systemName", systemName);
+        List<NumberOfPeople> numberOfPeopleList = numberOfPeopleService.list(wrapper);
+        if (numberOfPeopleList == null || numberOfPeopleList.size() == 0) {
+            return "系统错误！";
+        }
+        try {
+            numberOfPeopleList.forEach(numberOfPeople -> {
+                if (numberOfPeople.getRegion().equals(from)) {
+                    if (numberOfPeople.getNumber() - number<0){
+                        throw new RuntimeException("输入的人数超出了转移的范围");
+                    }
+                    numberOfPeople.setNumber(numberOfPeople.getNumber() - number);
+                    numberOfPeopleService.updateById(numberOfPeople);
+                } else if (numberOfPeople.getRegion().equals(to)) {
+                    numberOfPeople.setNumber(numberOfPeople.getNumber() + number);
+                    numberOfPeopleService.updateById(numberOfPeople);
+                }
+            });
+        }catch (RuntimeException e){
+            return e.getMessage();
+        }
+        redisTemplate.delete(systemName + "_NumberOfPeople");
+        return "转移成功！";
     }
 
 }

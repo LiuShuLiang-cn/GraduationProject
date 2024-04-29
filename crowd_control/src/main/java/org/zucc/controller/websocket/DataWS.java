@@ -107,7 +107,7 @@ public class DataWS {
    private SystemDao systemDao;
     @Resource
     private DeployDao deployDao;
-    @org.springframework.scheduling.annotation.Scheduled(cron = "*/5 * * * * ?")
+    //@org.springframework.scheduling.annotation.Scheduled(cron = "*/5 * * * * ?")
     public void sendData( ){
         //RedisTemplate redisTemplate = (RedisTemplate) applicationContext.getBean("redisTemplate");
         Set<String> keys = redisTemplate.keys("*" + "_NumberOfPeople");
@@ -119,7 +119,6 @@ public class DataWS {
             String[] parts = key.split("_");
             String systemName = parts[0];
             Object object;
-
             object = redisTemplate.opsForValue().get(systemName + "_NumberOfPeople");
             List<NumberOfPeople> peoples = CastClass.castList(object, NumberOfPeople.class);
             object = redisTemplate.opsForValue().get(systemName + "_Deploys");

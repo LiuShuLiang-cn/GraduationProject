@@ -8,4 +8,6 @@ public interface DeployService extends IService<Deploy> {
     void initDeploy(String systemName);
 
     void directivesDeploy(DeployVo deployVo);
+
+    String transPeople(String systemId,String from, String to, int number);
 }

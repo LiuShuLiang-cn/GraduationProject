@@ -7,7 +7,9 @@
                     <el-col :span="4" class="right-align">
                         <currentTime></currentTime>
                         <div class="user-profile">
-                            <el-avatar src="/public/喷泉.svg"></el-avatar>
+                            <el-icon>
+                                <User />
+                            </el-icon>
                             <span class="avatar-span">{{ userName }}</span>
                             <el-button type="danger">退出</el-button>
                         </div>

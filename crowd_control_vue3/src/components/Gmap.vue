@@ -213,7 +213,6 @@ onMounted(() => {
                     },
                     position: new AMap.LngLat(element[0], element[1]), //点标记在地图上显示的位置
                 });
-                console.log(peopleNum, 'peopleNum');
                 text.text = ref(peopleNum.value)
                 text.on('click', (function (lng, lat) {
                     return function () {

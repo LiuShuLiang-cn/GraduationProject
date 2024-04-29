@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { websocket, connectWebSocket } from '@/utils/websocket';
-import { ref, onMounted, defineProps } from 'vue'
+import { ref, onMounted, defineProps, computed } from 'vue'
 import { ElNotification, ElMessage } from 'element-plus'
 import axios from 'axios';
 // 消息
@@ -106,7 +106,10 @@ const addrs = ref<ADDR[]>([
         }, label: '标记三'
     }
 ])
-
+const limitedAddrs = computed(() => addrs.value.slice(0, 9));
+const peoNum = ref()
+const from = ref()
+const to = ref()
 const peo = ref()
 const msg = ref('')
 const msgTypes = ref([{ value: "1", label: "指令" }, { value: "2", label: "普通消息" }, { value: "3", label: "群发" }])
@@ -137,6 +140,20 @@ function changeActivate(e: any, type: String) {
     axios.get("/operate/" + systemId + "/" + type + "/" + status).then((res) => {
         if (res.data == 'switch')
             alert('修改成功')
+    })
+}
+
+function ZhuanYi() {
+    console.log('11', props.systemId, from.value, to.value, peoNum.value)
+    axios.get("/directives/trans", {
+        params: {
+            systemId: props.systemId,
+            from: from.value,
+            to: to.value,
+            number: peoNum.value
+        }
+    }).then((res) => {
+        ElNotification(res.data)
     })
 }
 
@@ -308,7 +325,7 @@ function todoSucc(res: any) {
 
 <template>
     <!-- 主办单位的功能 -->
-    <!-- <el-row v-if="role == '主办单位'">
+    <el-row v-if="role == '主办单位'">
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 活动名称：<el-text style="color: #409EFF;font-size: 18px;">西湖音乐节</el-text>
@@ -317,71 +334,71 @@ function todoSucc(res: any) {
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 是否举办活动： <el-switch v-model="activateStatus" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'statusActivity')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'statusActivity')" />
             </div>
         </el-col>
-    </el-row> -->
+    </el-row>
 
     <!-- 公交地铁的功能 -->
-    <!-- <el-row v-if="role == '公交地铁'">
+    <el-row v-if="role == '公交地铁'">
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 公交A：<el-switch v-model="busA" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'busA')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'busA')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 公交B：<el-switch v-model="busB" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'busB')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'busB')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 公交C：<el-switch v-model="busC" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'busC')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'busC')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 公交D：<el-switch v-model="busD" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'busD')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'busD')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 地铁A是否运行： <el-switch v-model="subwayA" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'subwayA')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'subwayA')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 地铁B是否运行： <el-switch v-model="subwayB" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'subwayB')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'subwayB')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 地铁C是否运行： <el-switch v-model="subwayC" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'subwayC')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'subwayC')" />
             </div>
         </el-col>
         <el-col :span="12">
             <div class="grid-content ep-bg-purple-dark">
                 地铁D是否运行： <el-switch v-model="subwayD" class="ml-2" inline-prompt
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是" inactive-text="否"
-                    size="large" @change="changeActivate($event, 'subwayD')" />
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" active-text="是"
+                    inactive-text="否" size="large" @change="changeActivate($event, 'subwayD')" />
             </div>
         </el-col>
-    </el-row> -->
+    </el-row>
     <!-- 公安、交警、城管、志愿者 -->
     <el-row>
         <el-col v-if="role == '公安' || role == '交警' || role == '志愿者' || role == '城管'">
@@ -391,6 +408,25 @@ function todoSucc(res: any) {
                     <el-option v-for="(item, index) in addrs" :key="index" :label="item.label" :value="item" />
                 </el-select>
                 <el-button type="primary" @click="BuShu" round>部署</el-button></el-space>
+        </el-col>
+    </el-row>
+    <!-- 市民 -->
+    <el-row>
+        <el-col v-if="role == '市民'">
+            <el-space wrap size=default>
+                转移人数： <el-input-number v-model="peoNum" size="large" />
+                <div>
+                    <el-select v-model="from" placeholder="请下拉选择" style="width: 120px">
+                        <el-option v-for="(item, index) in limitedAddrs" :key="index" :label="item.label"
+                            :value="item.label" />
+                    </el-select> 转移到
+                    <el-select v-model="to" placeholder="请下拉选择" size="large" style="width: 120px">
+                        <el-option v-for="(item, index) in limitedAddrs" :key="index" :label="item.label"
+                            :value="item.label" />
+                    </el-select>
+                </div>
+                <el-button type="primary" @click="ZhuanYi" round>转移</el-button>
+            </el-space>
         </el-col>
     </el-row>
 

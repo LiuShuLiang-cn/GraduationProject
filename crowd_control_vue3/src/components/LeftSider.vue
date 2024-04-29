@@ -1,11 +1,13 @@
 <template>
     <el-aside>
         <div class="section">
-            <!--插入图标-->
-            <v-mini-weather-icon :icon="icon"></v-mini-weather-icon>
-            <!--DIY内容-->
-            <span style="text-align: center;width: 100%;">{{ weather.cityName }}/{{ weather.weather }}/{{ weather.temp
-                }}</span>
+            <v-mini-weather>
+                <!--插入图标-->
+                <v-mini-weather-icon :icon="icon"></v-mini-weather-icon>
+                <!--DIY内容-->
+                <span style="text-align: center;width: 100%;">{{ weather.cityName }}/{{ weather.weather }}/{{
+                    weather.temp
+                    }}</span></v-mini-weather>
         </div>
         <div class="section">
             <PeopleChart :systemId="systemId" :role="role" />
@@ -16,14 +18,15 @@
     </el-aside>
 </template>
 <script setup lang="ts">
-import { vMiniWeatherIcon } from 'vue3-mini-weather'
+import { vMiniWeather, vMiniWeatherIcon } from 'vue3-mini-weather'
 import { onMounted, ref, defineProps } from 'vue'
 import PeopleChart from "@/components/chart/PeopleChart.vue";
 import DeployChart from './chart/DeployChart.vue';
+import axios from 'axios';
 const weather = ref({
-    cityName: "西湖",
-    weather: "晴天",
-    temp: "25°"
+    cityName: "",
+    weather: "",
+    temp: ""
 })
 const icon = ref('d00')
 const props = defineProps({
@@ -37,6 +40,30 @@ onMounted(() => {
 
 function getWeather() {
     // TODO 获取天气
+    axios.get("https://apia.aidioute.cn/weather").then((res) => {
+        console.log(res.data.data.weather)
+        const data = res.data.data.weather
+        weather.value.cityName = data.cityname
+        weather.value.weather = data.weather
+        weather.value.temp = data.temp
+        icon.value = data.weathercode
+    })
+    // 下面是高德的天气，但是icon值是人家的不好自己写一个，所以直接使用的他提供的，但是他的没法自定义城市
+    // axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
+    //     params: {
+    //         key: '8a64f52d0658d0dd347c0b5f5926e2d4',
+    //         city: '330106',
+    //         extensions: 'base',
+    //     }
+    // }).then((res) => {
+    //     console.log('天气：', res.data.lives)
+    //     const data = res.data.lives[0]
+    //     console.log(data)
+    //     weather.value.cityName = data.city
+    //     weather.value.weather = data.weather
+    //     weather.value.temp = data.temperature_float
+    //     // icon.value =
+    // })
 }
 </script>
 
