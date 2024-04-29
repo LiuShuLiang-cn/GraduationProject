@@ -53,7 +53,7 @@ public class ChatController {
         object = redisTemplate.opsForValue().get(systemName + "_Deploys");
         List<Deploy> deploys = CastClass.castList(object, Deploy.class);
         String time = (String) redisTemplate.opsForValue().get(systemName + "_Time");
-        if (peoples == null || deploys == null || time == null||deploys.isEmpty()) {
+        if (peoples == null || deploys == null || time == null||deploys.isEmpty()||deploys==null) {
             peoples = numberOfPeopleDao.getNumBySys(systemName);
             deploys = deployDao.getNumBySys(systemName);
             QueryWrapper<Systems> systemsQueryWrapper = new QueryWrapper<>();

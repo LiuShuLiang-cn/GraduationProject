@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, toRefs, defineProps } from "vue";
+import { onMounted, onUnmounted, ref, toRefs, defineProps, computed } from "vue";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import axios from "axios";
 import myDialog from "./myDialog.vue";
@@ -75,19 +75,20 @@ var options =
     ]
 };
 // 路口警力
-var lnglats = [[120.160988, 30.257241],// 钱塘里
-[120.163306, 30.256641],// 长生里
-[120.161679, 30.256041],// 劝业里
-[120.162178, 30.254551],// 学士里
-[120.163452, 30.254666],//龙翔里
-[120.162555, 30.252937],//仁和里
-[120.163585, 30.252126],//东坡里
-[120.162707, 30.249315],//将军里
-[120.165169, 30.249562],//泗水里
-[120.161503, 30.253908],//
-[120.160966, 30.254118],
-[120.161199, 30.253807]];
-
+var lnglats = [
+    [120.160988, 30.257241],// 钱塘里
+    [120.163306, 30.256641],// 长生里
+    [120.161679, 30.256041],// 劝业里
+    [120.162178, 30.254551],// 学士里
+    [120.163452, 30.254666],//龙翔里
+    [120.162555, 30.252937],//仁和里
+    [120.163585, 30.252126],//东坡里
+    [120.162707, 30.249315],//将军里
+    [120.165169, 30.249562],//泗水里
+    [120.161503, 30.253908],//
+    [120.160966, 30.254118],
+    [120.161199, 30.253807]];
+const limitedLngLats = computed(() => lnglats.slice(9, 13));
 
 var markers: any = [];
 //实例化信息窗体
@@ -112,7 +113,7 @@ const props = defineProps({
 var infoWindow: any
 import { ElNotification, ElMessage } from 'element-plus'
 import { websocket, connectWebSocket } from "@/utils/websocket";
-
+var Map = null
 onMounted(() => {
     // 加载地图
     AMapLoader.load({
@@ -121,6 +122,7 @@ onMounted(() => {
         plugins: ["AMap.Scale"], //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
     })
         .then((AMap) => {
+            Map = AMap
             var buildingLayer = new AMap.Buildings({ zIndex: 130, merge: false, sort: false, zooms: [17, 20] });
             // 创建地图  Start
             map = new AMap.Map("container", {
@@ -191,36 +193,19 @@ onMounted(() => {
             });
             // END
 
-            lnglats.forEach((element, index) => {
-                var text = new AMap.Text({
-                    text: peopleNum.value, //标记显示的文本内容
-                    anchor: "center", //设置文本标记锚点位置
-                    draggable: false, //是否可拖拽
-                    cursor: "pointer", //指定鼠标悬停时的鼠标样式。
-                    angle: 0, //点标记的旋转角度
-                    style: {
-                        //设置文本样式，Object 同 css 样式表
-                        "padding": ".75rem 1.25rem",
-                        "margin-bottom": "1rem",
-                        "border-radius": ".25rem",
-                        "background-color": "white",
-                        "width": "15rem",
-                        "border-width": 0,
-                        "box-shadow": "0 2px 6px 0 rgba(114, 124, 245, .5)",
-                        "text-align": "center",
-                        "font-size": "20px",
-                        "color": "blue",
-                    },
+            limitedLngLats.value.forEach((element, index) => {
+                console.log(index, element)
+                var text = new AMap.Marker({
+                    title: '标志',
                     position: new AMap.LngLat(element[0], element[1]), //点标记在地图上显示的位置
                 });
-                text.text = ref(peopleNum.value)
+                // text.setText(index + 1)
                 text.on('click', (function (lng, lat) {
                     return function () {
                         show(lng);
                     };
                 })(element[0], element[1]));
-                text.setMap(map);
-                // markers.push(marker);
+                map.add(text)
             })
             // 创建覆盖物群组，并将 marker 传给 OverlayGroup
             var overlayGroups = new AMap.OverlayGroup(markers);
@@ -231,7 +216,7 @@ onMounted(() => {
             // 创建音乐喷泉标志
             const icon = new AMap.Icon({
                 size: new AMap.Size(25, 34), //图标尺寸
-                image: './public/喷泉.svg', //Icon 的图像,我不明白为啥是hrf而不是href
+                image: '//vdata.amap.com/icons/b18/1/2.png',
             });
             const marker = new AMap.Marker({
                 // content: content, //自定义点标记覆盖物内容
@@ -252,6 +237,7 @@ onMounted(() => {
             });
 
             // END
+
         })
         .catch((e) => {
             console.log(e);
@@ -261,19 +247,52 @@ onMounted(() => {
                 type: 'error'
             })
         });
+    // LoadPeoNum(map)
     // 建立websocket数据传输
-    // connectWebSocket("ws:/192.168.130.124:8015/websocket/data/" + props.systemId + '/' + props.role)
-    // websocket.onopen = function (event: any) {
-    //     ElMessage({ message: '数据传输通道建立', type: 'success' })
-    // }
-    // websocket.onmessage = function (event: any) {
-    //     console.log('111', event.data)
-    //     const deployList = JSON.parse(event.data).deployList
-    //     const numberOfPeopleList = JSON.parse(event.data).numberOfPeopleList
-
-    // }
+    connectWebSocket("ws:/192.168.130.124:8015/websocket/data/" + props.systemId + '/' + props.role)
+    websocket.onopen = function (event: any) {
+        ElMessage({ message: '数据传输通道建立', type: 'success' })
+    }
+    websocket.onmessage = function (event: any) {
+        // const deployList = JSON.parse(event.data).deployList
+        const numberOfPeopleList = JSON.parse(event.data).numberOfPeopleList
+        updataMarkerText(numberOfPeopleList)
+    }
 }
 );
+function updataMarkerText(numberOfPeopleList: any) {
+    numberOfPeopleList.forEach((element, index) => {
+        var text = new Map.Text({
+            text: '335', //标记显示的文本内容
+            anchor: "center", //设置文本标记锚点位置
+            draggable: false, //是否可拖拽
+            cursor: "pointer", //指定鼠标悬停时的鼠标样式。
+            angle: 0, //点标记的旋转角度
+            style: {
+                //设置文本样式，Object 同 css 样式表
+                "padding": ".75rem 1.25rem",
+                "margin-bottom": "1rem",
+                "border-radius": ".25rem",
+                "background-color": "white",
+                "width": "3rem",
+                "border-width": 0,
+                "box-shadow": "0 2px 6px 0 rgba(114, 124, 245, .5)",
+                "text-align": "center",
+                "font-size": "15px",
+                "color": "blue",
+            },
+            position: new Map.LngLat(element.longitude, element.latitude), //点标记在地图上显示的位置
+        });
+        text.on('click', (function (lng, lat) {
+            return function () {
+                show(lng);
+            };
+        })(element.longitude, element.latitude));
+        text.setText(element.number)
+        text.setMap(map);
+    });
+
+}
 /**
  * 西湖文化活动窗体
  * @param {*} e 

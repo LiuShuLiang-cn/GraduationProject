@@ -94,8 +94,8 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
                 break;
         }
 
-        List<Deploy> deploys = deployDao.getNumBySys(systemName);
-        redisTemplate.opsForValue().set(systemName + "_Deploys", Collections.singletonList(deploys));
+        //List<Deploy> deploys = deployDao.getNumBySys(systemName);
+        redisTemplate.delete(systemName + "_Deploys");
         log.info("部署了" + deployVo.getNum() + "人");
     }
     @Override

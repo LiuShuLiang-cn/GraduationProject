@@ -81,7 +81,7 @@ public class DataWS {
      * @param message 消息
      */
     public void sendAllMessage(DataVo message, @PathParam(value = "systemId") String systemId, @PathParam("role") String role) {
-        log.info("【WebSocket消息】广播消息：" + message);
+        //log.info("【WebSocket消息】广播消息：" + message);
         ArrayList<Session> sessions = new ArrayList<>();
         for (String s : RoleUtils.getRole(systemId, role)) {
             if (SESSION_POOL.containsKey(s)) {
@@ -107,7 +107,7 @@ public class DataWS {
    private SystemDao systemDao;
     @Resource
     private DeployDao deployDao;
-    //@org.springframework.scheduling.annotation.Scheduled(cron = "*/5 * * * * ?")
+    @org.springframework.scheduling.annotation.Scheduled(cron = "*/5 * * * * ?")
     public void sendData( ){
         //RedisTemplate redisTemplate = (RedisTemplate) applicationContext.getBean("redisTemplate");
         Set<String> keys = redisTemplate.keys("*" + "_NumberOfPeople");
@@ -121,8 +121,8 @@ public class DataWS {
             Object object;
             object = redisTemplate.opsForValue().get(systemName + "_NumberOfPeople");
             List<NumberOfPeople> peoples = CastClass.castList(object, NumberOfPeople.class);
-            object = redisTemplate.opsForValue().get(systemName + "_Deploys");
-            List<Deploy> deploys = CastClass.castList(object, Deploy.class);
+            Object object2 = redisTemplate.opsForValue().get(systemName + "_Deploys");
+            List<Deploy> deploys = CastClass.castList(object2, Deploy.class);
             String time = (String) redisTemplate.opsForValue().get(systemName + "_Time");
             if (peoples == null || deploys == null || time == null||deploys.isEmpty()) {
                 peoples = numberOfPeopleDao.getNumBySys(systemName);
