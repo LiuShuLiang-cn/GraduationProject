@@ -157,11 +157,20 @@ function ZhuanYi() {
             number: peoNum.value
         }
     }).then((res) => {
-        ElNotification({
-            title: 'Success',
-            message: res.data,
-            type: 'success'
-        })
+        if (res.data == '输入的人数超出了转移的范围') {
+            ElNotification({
+                title: 'Warning',
+                message: res.data,
+                type: 'warning'
+            })
+        } else {
+            ElNotification({
+                title: 'Success',
+                message: res.data,
+                type: 'success'
+            })
+        }
+
     })
 }
 
