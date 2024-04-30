@@ -130,6 +130,9 @@ public class DataWS {
                 QueryWrapper<Systems> systemsQueryWrapper = new QueryWrapper<>();
                 systemsQueryWrapper.eq("systemname", systemName);
                 time = systemDao.selectOne(systemsQueryWrapper).getRunTime();
+                if (peoples.size()!=9){
+                    throw new RuntimeException("人数列表不够9个");
+                }
                 redisTemplate.opsForValue().set(systemName + "_NumberOfPeople", peoples);
                 redisTemplate.opsForValue().set(systemName + "_Deploys", deploys);
                 redisTemplate.opsForValue().set(systemName + "_Time", time);

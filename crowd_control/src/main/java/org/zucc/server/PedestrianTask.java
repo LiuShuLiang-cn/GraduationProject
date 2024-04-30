@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.zucc.dao.SystemDao;
 import org.zucc.entity.*;
+import org.zucc.service.NumberOfPeopleService;
 import org.zucc.service.OperateService;
 import org.zucc.utils.CastClass;
 import org.zucc.utils.Constant;
@@ -66,11 +67,18 @@ public class PedestrianTask {
             transferPedestrian(parts[0]);
         }
     }
-
+@Resource
+private NumberOfPeopleService numberOfPeopleService;
     public void transferPedestrian(String systemName) {
         int count = 0;
         Object object = redisTemplate.opsForValue().get(systemName + "_NumberOfPeople");
         List<NumberOfPeople> numberOfPeopleList = CastClass.castList(object, NumberOfPeople.class);
+        if (numberOfPeopleList.size() != 9) {
+            //QueryWrapper<NumberOfPeople> wrapper = new QueryWrapper<>();
+            //wrapper.eq("systemName", systemName);
+            //numberOfPeopleList=numberOfPeopleService.list(wrapper);
+            //return;
+        }
         List<NumberOfPeople> res = new ArrayList<>();
         for (NumberOfPeople numberOfPeople : numberOfPeopleList) {
             int number = numberOfPeople.getNumber() / Constant.TRANSFER_RATE;
@@ -137,9 +145,9 @@ public class PedestrianTask {
                         } else {
                             numberOfPeople.setStatus("green");
                         }
-                        res.add(numberOfPeople);
-                    }
 
+                    }
+                    res.add(numberOfPeople);
                 }
             });
         }

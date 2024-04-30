@@ -139,7 +139,11 @@ function changeActivate(e: any, type: String) {
     var systemId = 21
     axios.get("/operate/" + systemId + "/" + type + "/" + status).then((res) => {
         if (res.data == 'switch')
-            alert('修改成功')
+            ElNotification({
+                title: "success",
+                message: "修改成功",
+                type: 'success'
+            })
     })
 }
 
@@ -188,6 +192,7 @@ onMounted(() => {
 
     var r = [
         { value: "指挥中心", label: "指挥中心" },
+        { value: "主办单位", label: "主办单位" },
         { value: "公安", label: "公安" },
         { value: "交警", label: "交警" },
         { value: "城管", label: "城管" },
@@ -223,7 +228,7 @@ onMounted(() => {
 
             ElNotification({
                 title: '消息',
-                message: '收到一条来自指挥中心的指令',
+                message: '收到一条来自' + msg.fromRole + '的指令',
                 type: 'success',
             })
         } else if (msg.type == '4') {
@@ -448,8 +453,7 @@ function todoSucc(res: any) {
 
     <!-- 选择框和按钮的组合 -->
     <div class="select-group">
-        <el-select v-if="role == '指挥中心'" v-model="msgType" placeholder="请选择消息类型"
-            style="width: 240px; margin-right: 10px;">
+        <el-select v-model="msgType" placeholder="请选择消息类型" style="width: 240px; margin-right: 10px;">
             <el-option v-for="item in msgTypes" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <el-select v-model="toRole" placeholder="请选择要发送的对象" style="width: 240px; margin-right: 10px;">
