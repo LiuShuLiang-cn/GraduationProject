@@ -157,7 +157,11 @@ function ZhuanYi() {
             number: peoNum.value
         }
     }).then((res) => {
-        ElNotification(res.data)
+        ElNotification({
+            title: 'Success',
+            message: res.data,
+            type: 'success'
+        })
     })
 }
 
