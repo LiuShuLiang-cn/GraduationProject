@@ -122,12 +122,10 @@ private NumberOfPeopleService numberOfPeopleService;
             //检查音乐喷泉活动是否开启
             if (operate.getStatusActivity().equals("1") && ("学士里".equals(weight.getCategory()) || "仁和里".equals(weight.getCategory()))) {
                 weight.setWeight(weight.getWeight() - 5);
-                //log.info("{}:检测到音乐喷泉处于开启状态，修改{}的权重为{}", systemName, weight.getCategory(), weight.getWeight());
             }
             //交通
             weight.setWeight(weight.getWeight() + getBusAndSub(systemName) / 4);
             categoryList2.add(weight);
-
         }
         //检查志愿者，交警，公安，城管有多少人,修改权重
         List<Weight> weights = updateWeightByDeploy(categoryList2, deploys);

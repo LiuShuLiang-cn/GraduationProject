@@ -57,7 +57,6 @@ public class CustomerRealm extends AuthorizingRealm {
          */
         String principal = (String) token.getPrincipal();
         //在工厂中获取service对象
-
         User user = userDao.getUserByName(principal);
         ByteSource credentialsSalt = ByteSource.Util.bytes(user.getSalt());
         if (!ObjectUtils.isEmpty(user)) {

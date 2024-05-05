@@ -249,7 +249,7 @@ onMounted(() => {
         });
     // LoadPeoNum(map)
     // 建立websocket数据传输
-    connectWebSocket("ws:/192.168.130.124:8015/websocket/data/" + props.systemId + '/' + props.role)
+    connectWebSocket("ws:/10.64.237.226:8015/websocket/data/" + props.systemId + '/' + props.role)
     websocket.onopen = function (event: any) {
         ElMessage({ message: '数据传输通道建立', type: 'success' })
     }
