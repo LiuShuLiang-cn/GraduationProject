@@ -77,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             }
             /* 如果是0，则是创建新系统 */
             if ("0".equals(system)) {
-                creatSystem(speed);
+                system=creatSystem(speed);
             }
             user_mysql.setSystemName(system);
             scoreService.setLoginRole(system, user.getRole(), user.getUserName());
@@ -86,7 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             subject.login(new UsernamePasswordToken(user.getUserName(), user.getPassword()));
             user_mysql.setRole(user.getRole());
             baseMapper.updateById(user_mysql);
-            return "success";
+            return system;
         } catch (UnknownAccountException e) {
             e.printStackTrace();
             return "用户名错误！";
@@ -109,7 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return baseMapper.selectOne(queryWrapper);
     }
 
-    private void creatSystem(int speed) throws ParseException {
+    private String creatSystem(int speed) throws ParseException {
         /*
            创建一个新系统系统
          */
@@ -130,6 +130,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         deployService.initDeploy(system);
         //初始化人数
         scoreService.initScore(system);
+        QueryWrapper<Systems> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("systemname", system);
+
+        return systemService.list(queryWrapper).get(0).getId()+"";
     }
 
     private String handlePage(String role) {

@@ -61,7 +61,7 @@ async function login() {
         num: 5,
         system: system.value
     }).then((res) => {
-        if (res.data != 'success') {
+        if (res.data == '用户名错误！') {
             alert(res.data)
         } else {
             route.push({
@@ -69,7 +69,7 @@ async function login() {
                 query: {
                     userName: props.name,
                     role: role.value,
-                    system: system.value
+                    system: res.data
                 }
             })
         }
