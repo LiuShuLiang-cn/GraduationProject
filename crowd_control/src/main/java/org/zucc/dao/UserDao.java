@@ -12,6 +12,6 @@ public interface UserDao extends BaseMapper<User> {
     @Select("select * from user where username = #{name}")
     User getUserByName(String name);
 
-    @Update("UPDATE `user` SET `status` = 0 , `systemname`= NULL")
+    @Update("UPDATE `user` SET `status` = 0 , `systemname`= NULL, `role`=NULL")
     int update_init_stop();
 }

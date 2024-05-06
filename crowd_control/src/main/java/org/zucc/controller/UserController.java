@@ -1,13 +1,22 @@
 package org.zucc.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zucc.dao.UserDao;
+import org.zucc.entity.NumberOfPeople;
+import org.zucc.entity.Systems;
 import org.zucc.entity.User;
+import org.zucc.service.NumberOfPeopleService;
+import org.zucc.service.SystemService;
 import org.zucc.service.UserService;
+import org.zucc.utils.CastClass;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -73,9 +82,46 @@ public class UserController {
     public String getQuestion() {
         return "question";
     }
-
+    @Resource
+    private RedisTemplate redisTemplate;
+    @Resource
+    private SystemService systemService;
+    @Resource
+    private UserDao userDao;
+    @Resource
+    private NumberOfPeopleService numberOfPeopleService;
     @GetMapping("/logout")
-    public String logout() {
+    public String logout(@RequestParam("systemId") String systemId,@RequestParam("role")String role) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("systemname", systemId);
+        List<User> userList = userService.list(queryWrapper);
+        if (userList.size()==1){
+            User user = userList.get(0);
+            user.setSystemName("");
+            user.setRole("");
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("id", user.getId());
+            userDao.update(user,wrapper);
+            Systems systems = systemService.getById(systemId);
+
+            Object object = redisTemplate.opsForValue().get(systems.getSystemName() + "_NumberOfPeople");
+            List<NumberOfPeople> numberOfPeopleList = CastClass.castList(object, NumberOfPeople.class);
+            numberOfPeopleService.updateBatchById(numberOfPeopleList);
+
+            redisTemplate.delete(systems.getSystemName() + "_NumberOfPeople");
+            redisTemplate.delete(systems.getSystemName() + "_Time");
+            redisTemplate.delete(systems.getSystemName() + "_Deploys");
+            redisTemplate.delete(systems.getSystemName() + "_operate");
+        }else if (userList.size()>1){
+            QueryWrapper<User> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper.eq("systemname", systemId);
+            queryWrapper.eq("role", role);
+            List<User> userList2 = userService.list(queryWrapper);
+            User user = userList2.get(0);
+            user.setSystemName(null);
+            user.setRole(null);
+            userService.updateById(user);
+        }
         return "redirect:/user/login";
     }
 }

@@ -84,6 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             httpSession.setAttribute("currentUser", user);
             Subject subject = SecurityUtils.getSubject();
             subject.login(new UsernamePasswordToken(user.getUserName(), user.getPassword()));
+            user_mysql.setRole(user.getRole());
             baseMapper.updateById(user_mysql);
             return "success";
         } catch (UnknownAccountException e) {

@@ -9,6 +9,8 @@ import org.zucc.dao.SystemDao;
 import org.zucc.entity.*;
 import org.zucc.service.NumberOfPeopleService;
 import org.zucc.service.OperateService;
+import org.zucc.service.SystemService;
+import org.zucc.service.UserService;
 import org.zucc.utils.CastClass;
 import org.zucc.utils.Constant;
 
@@ -31,6 +33,12 @@ public class PedestrianTask {
     private OperateService operateService;
     @Resource
     private SystemDao systemDao;
+    @Resource
+    private SystemService systemService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private NumberOfPeopleService numberOfPeopleService;
 
     public static void getWeight(List<Weight> categorys) {
         int weightSum = 0;
@@ -65,10 +73,21 @@ public class PedestrianTask {
         for (String key : keys) {
             String[] parts = key.split("_");
             transferPedestrian(parts[0]);
+            QueryWrapper<Systems> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("systemname", parts[0]);
+            Systems systems = systemService.list(queryWrapper).get(0);
+            int id = systems.getId();
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("systemname", id);
+            if (userService.list(wrapper).size() == 0) {
+                redisTemplate.delete(systems.getSystemName() + "_NumberOfPeople");
+                redisTemplate.delete(systems.getSystemName() + "_Time");
+                redisTemplate.delete(systems.getSystemName() + "_Deploys");
+                redisTemplate.delete(systems.getSystemName() + "_operate");
+            }
         }
     }
-@Resource
-private NumberOfPeopleService numberOfPeopleService;
+
     public void transferPedestrian(String systemName) {
         int count = 0;
         Object object = redisTemplate.opsForValue().get(systemName + "_NumberOfPeople");
@@ -157,7 +176,7 @@ private NumberOfPeopleService numberOfPeopleService;
         List<Weight> res = new ArrayList<>();
         deploys.forEach(deploy -> {
             weights.forEach(weight -> {
-                if (String.valueOf(deploy.getCgLat()) .equals(weight.getLatitude()) ) {
+                if (String.valueOf(deploy.getCgLat()).equals(weight.getLatitude())) {
                     int w = deploy.getCg() + deploy.getGa() * 2 + deploy.getJj() * 2 + deploy.getZyz();
                     weight.setWeight(weight.getWeight() + w);
                     res.add(weight);

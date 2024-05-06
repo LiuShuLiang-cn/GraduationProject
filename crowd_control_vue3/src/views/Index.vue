@@ -11,7 +11,7 @@
                                 <User />
                             </el-icon>
                             <span class="avatar-span">{{ userName }}</span>
-                            <el-button type="danger">退出</el-button>
+                            <el-button type="danger" @click="logout">退出</el-button>
                         </div>
                     </el-col>
                 </el-row>
@@ -36,19 +36,32 @@ import leftSider from '@/components/LeftSider.vue'
 import rightSider from '@/components/RightSider.vue'
 // 引入地图组件
 import MapComponent from '@/components/Gmap.vue';
-import { useRoute } from 'vue-router'
-
+import { useRoute, useRouter } from 'vue-router'
+import axios from "axios";
 /**
  * 获取登录传来的用户名、登录系统id、角色
  */
 const route = useRoute()
+const router = useRouter()
 const userName = route.query.userName
 const systemId = route.query.system
 const role = route.query.role
 
+function logout() {
+    axios.get("/user/logout", {
+        params: {
+            systemId: systemId,
+            userName: userName,
+            role: role
+        }
+    }).then((res) => {
+        router.push({
+            path: '/login'
+        })
+    })
+}
 
 onMounted(() => {
-    console.log("index页面", systemId);
 
 })
 
