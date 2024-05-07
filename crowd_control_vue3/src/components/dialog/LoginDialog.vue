@@ -63,6 +63,12 @@ async function login() {
     }).then((res) => {
         if (res.data == '用户名错误！') {
             alert(res.data)
+        } else if (res.data == '已登陆') {
+            alert(res.data)
+        } else if (res.data == '密码错误！') {
+            alert(res.data)
+        } else if (res.data == '发送异常！') {
+            alert(res.data)
         } else {
             route.push({
                 path: '/index',

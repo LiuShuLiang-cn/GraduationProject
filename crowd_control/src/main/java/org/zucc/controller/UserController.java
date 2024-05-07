@@ -13,6 +13,7 @@ import org.zucc.service.NumberOfPeopleService;
 import org.zucc.service.SystemService;
 import org.zucc.service.UserService;
 import org.zucc.utils.CastClass;
+import org.zucc.utils.Constant;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -101,6 +102,7 @@ public class UserController {
             user.setRole("");
             QueryWrapper<User> wrapper = new QueryWrapper<>();
             wrapper.eq("id", user.getId());
+            user.setStatus(Constant.STATUS_OFFLINE);
             userDao.update(user,wrapper);
             Systems systems = systemService.getById(systemId);
 
@@ -120,6 +122,7 @@ public class UserController {
             User user = userList2.get(0);
             user.setSystemName(null);
             user.setRole(null);
+            user.setStatus(Constant.STATUS_OFFLINE);
             userService.updateById(user);
         }
         return "redirect:/user/login";
