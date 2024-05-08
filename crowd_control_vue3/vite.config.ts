@@ -19,15 +19,5 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
-    // server: {
-    //     proxy: {
-    //         '/api': {
-    //             target: 'http://192.168.0.106:8015',
-    //             changeOrigin: true,
-    //             ws: true,// 是否代理websocket
-    //             secure: true, // 是否代理https
-    //             rewrite: path => path.replace(/^\/api/, '')
-    //         }
-    //     }
-    // }
+
 })

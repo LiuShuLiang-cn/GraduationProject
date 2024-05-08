@@ -7,7 +7,7 @@
                 <!--DIY内容-->
                 <span style="text-align: center;width: 100%;">{{ weather.cityName }}/{{ weather.weather }}/{{
                     weather.temp
-                }}</span></v-mini-weather>
+                    }}</span></v-mini-weather>
         </div>
         <div class="section">
             <PeopleChart :systemId="systemId" :role="role" />
@@ -40,8 +40,9 @@ onMounted(() => {
 
 function getWeather() {
     // TODO 获取天气
-    axios.get("https://apia.aidioute.cn/weather").then((res) => {
+    axios.get("https://apia.aidioute.cn/weather/").then((res) => {
         const data = res.data.data.weather
+        console.log('天气', data)
         weather.value.cityName = data.cityname
         weather.value.weather = data.weather
         weather.value.temp = data.temp

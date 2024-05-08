@@ -217,7 +217,7 @@ onMounted(() => {
         return element.label !== props.role;
     });
     // 建立websocket连接
-    connectWebSocket("ws:/192.168.130.25:8015/websocket/" + props.systemId + '/' + props.role)
+    connectWebSocket("ws:/10.64.237.71:8015/websocket/" + props.systemId + '/' + props.role)
     websocket.onopen = function (event: any) {
         ElMessage({ message: '连接成功', type: 'success' })
         var msg: Chat = {

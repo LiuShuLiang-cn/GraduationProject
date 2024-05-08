@@ -9,7 +9,7 @@ import router from "@/router";
 import App from "./App.vue";
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:8015'
+axios.defaults.baseURL = 'http://10.64.237.71:8015'
 axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
 let app = createApp(App);
