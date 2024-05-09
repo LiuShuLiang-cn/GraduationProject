@@ -2,7 +2,7 @@
     <div ref="containerRef">
         <component v-for="item in components" :key="item.name" :is="item.component" class="es-screen-left-item"
             :name="item.name">
-            <Left1 />
+            <!-- <Left1 /> -->
         </component>
     </div>
 </template>
@@ -10,7 +10,6 @@
 <script setup lang='ts'>
 import { shallowRef } from 'vue'
 import { useSortable } from '@/utils/useSortable'
-
 import Left1 from './Left1.vue'
 import Left2 from './Left2.vue'
 const components = shallowRef([

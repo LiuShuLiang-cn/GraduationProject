@@ -2,7 +2,6 @@
     <div :class="['es-screen-container', store.theme]">
         <div ref="screenRef" class="es-screen">
             <Header />
-
             <div class="es-screen-main">
                 <div class="es-screen-left">
                     <Right />
@@ -26,8 +25,33 @@ import Left from './components/left/index.vue'
 import Right from './components/right/index.vue'
 import Center from './components/center/index.vue'
 import { useScreenStore } from '@/store'
+import { onMounted } from 'vue'
 const store = useScreenStore()
 const { screenRef } = useResize()
+import { websocket, connectWebSocket } from "@/utils/websocket";
+import { useWebsocketStore } from '@/store/websocket'
+const websocketStore = useWebsocketStore()
+import { ElMessage } from 'element-plus'
+import { DataResponse } from '@/api/websocket'
+onMounted(() => {
+    initWebSocket()
+})
+
+function initWebSocket() {
+    connectWebSocket("ws:/127.0.0.1:8015/websocket/data/" + '25' + '/' + '指挥中心')
+    websocket.onopen = function (event: any) {
+        ElMessage({ message: '数据传输通道建立', type: 'success' })
+        console.log(event)
+    }
+    websocket.onmessage = function (event: any) {
+        const data: DataResponse = JSON.parse(event.data)
+        const numberOfPeopleList = data.numberOfPeopleList
+        websocketStore.updateDeployList(data.deployList)
+        websocketStore.updateNumberOfPeopleList(numberOfPeopleList)
+        websocketStore.updateOperate(data.operate)
+
+    }
+}
 
 </script>
 <style lang='scss' scoped>

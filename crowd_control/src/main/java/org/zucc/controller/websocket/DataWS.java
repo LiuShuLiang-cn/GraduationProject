@@ -8,11 +8,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.zucc.dao.DeployDao;
 import org.zucc.dao.NumberOfPeopleDao;
+import org.zucc.dao.OperateDao;
 import org.zucc.dao.SystemDao;
-import org.zucc.entity.Chat;
-import org.zucc.entity.Deploy;
-import org.zucc.entity.NumberOfPeople;
-import org.zucc.entity.Systems;
+import org.zucc.entity.*;
 import org.zucc.entity.vo.DataVo;
 import org.zucc.service.ChatService;
 import org.zucc.service.SystemService;
@@ -106,6 +104,8 @@ public class DataWS {
     @Resource
    private SystemDao systemDao;
     @Resource
+    private OperateDao operateDao;
+    @Resource
     private DeployDao deployDao;
     @org.springframework.scheduling.annotation.Scheduled(cron = "*/5 * * * * ?")
     public void sendData( ){
@@ -124,23 +124,30 @@ public class DataWS {
             Object object2 = redisTemplate.opsForValue().get(systemName + "_Deploys");
             List<Deploy> deploys = CastClass.castList(object2, Deploy.class);
             String time = (String) redisTemplate.opsForValue().get(systemName + "_Time");
-            if (peoples == null || deploys == null || time == null||deploys.isEmpty()) {
+            Operate operate = (Operate) redisTemplate.opsForValue().get(systemName + "_operate");
+            if (peoples == null || deploys == null || time == null||deploys.isEmpty()||operate==null) {
                 peoples = numberOfPeopleDao.getNumBySys(systemName);
                 deploys = deployDao.getNumBySys(systemName);
+                QueryWrapper<Operate> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("systemName", systemName);
+                operate = operateDao.selectList(queryWrapper).get(0);
                 QueryWrapper<Systems> systemsQueryWrapper = new QueryWrapper<>();
                 systemsQueryWrapper.eq("systemname", systemName);
                 time = systemDao.selectOne(systemsQueryWrapper).getRunTime();
                 if (peoples.size()!=9){
                     throw new RuntimeException("人数列表不够9个");
                 }
+
                 redisTemplate.opsForValue().set(systemName + "_NumberOfPeople", peoples);
                 redisTemplate.opsForValue().set(systemName + "_Deploys", deploys);
                 redisTemplate.opsForValue().set(systemName + "_Time", time);
+                redisTemplate.opsForValue().set(systemName + "_operate", operate);
             }
             DataVo vo = new DataVo();
             vo.setNumberOfPeopleList(peoples);
             vo.setDeployList(deploys);
             vo.setSystemTime(time);
+            vo.setOperate(operate);
             QueryWrapper<Systems> wrapper = new QueryWrapper<Systems>();
             wrapper.eq("systemname", systemName);
             sendAllMessage(vo,String.valueOf(systemDao.selectOne(wrapper).getId()),"");

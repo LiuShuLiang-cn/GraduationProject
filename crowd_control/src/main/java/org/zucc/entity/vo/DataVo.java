@@ -4,6 +4,7 @@ import lombok.Data;
 import org.zucc.dao.NumberOfPeopleDao;
 import org.zucc.entity.Deploy;
 import org.zucc.entity.NumberOfPeople;
+import org.zucc.entity.Operate;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public class DataVo {
     private List<Deploy> deployList;
 
     private String systemTime;
+    private Operate operate;
 }

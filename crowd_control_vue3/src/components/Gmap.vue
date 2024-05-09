@@ -183,6 +183,21 @@ onMounted(() => {
                         fillColor: "#ffeeff",
                         cursor: 'ani',
                     });
+                });//鼠标移入更改样式
+                polygon.on("mouseover", () => {
+                    polygon.setOptions({
+                        fillOpacity: 0.7, //多边形填充透明度
+                        fillColor: "#7bccc4",
+                        cursor: 'pointer',
+                    });
+                });
+                //鼠标移出恢复样式
+                polygon.on("mouseout", () => {
+                    polygon.setOptions({
+                        fillOpacity: 0.5,
+                        fillColor: "#ffeeff",
+                        cursor: 'ani',
+                    });
                 });
                 map.add(polygon);
             })
@@ -249,7 +264,7 @@ onMounted(() => {
         });
     // LoadPeoNum(map)
     // 建立websocket数据传输
-    connectWebSocket("ws:/10.67.151.225:8015/websocket/data/" + props.systemId + '/' + props.role)
+    connectWebSocket("ws:/127.0.0.1:8015/websocket/data/" + props.systemId + '/' + props.role)
     websocket.onopen = function (event: any) {
         ElMessage({ message: '数据传输通道建立', type: 'success' })
     }
