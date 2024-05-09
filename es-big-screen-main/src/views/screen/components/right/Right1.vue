@@ -1,6 +1,6 @@
 <template>
 	<div class="es-block">
-		<Title>热销商品的占比</Title>
+		<Title>活动与公交信息</Title>
     <div style="width: 100%;height: 90%;">
 			<Chart :option="option" />
 		</div>
