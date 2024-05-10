@@ -1,5 +1,7 @@
 <template>
-    <div ref="chartRef" className='es-chart'></div>
+    <div class="mainCLo">
+        <div ref="chartRef" className='es-chart'></div>
+    </div>
 </template>
 
 <script setup lang='ts'>
@@ -58,8 +60,24 @@ defineExpose({
 </script>
 
 <style lang='scss' scoped>
+.mainCLo {
+    width: 300px;
+    height: 300px;
+    position: relative;
+    top: -40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
 .es-chart {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
+    position: relative;
+    top: -10px;
+    left: 20%;
+    width: 250px;
+    height: 300px;
 }
 </style>
