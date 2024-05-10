@@ -2,7 +2,13 @@
     <div class="es-block">
         <Title>警力分布</Title>
         <div style="width: 100%;height: 90%;">
-            <Chart :option="option" />
+            <el-tabs :tab-position="'left'" class="demo-tabs">
+                <el-tab-pane label="User">User</el-tab-pane>
+                <el-tab-pane label="Config">Config</el-tab-pane>
+                <el-tab-pane label="Role">Role</el-tab-pane>
+                <el-tab-pane label="Task">Task</el-tab-pane>
+            </el-tabs>
+            <!-- <Chart :option="option" /> -->
         </div>
     </div>
 </template>
@@ -13,7 +19,7 @@ import Title from '../Title.vue'
 import Chart from '@/components/chart/Chart.vue'
 import allData from '@/assets/data/stock.json'
 import * as echarts from 'echarts'
-
+import { ElTabPane, ElTabs } from 'element-plus'
 const currentIndex = ref(0)
 const option = ref({
     series: getSeries()
@@ -92,6 +98,19 @@ function getSeries() {
 <style lang='scss' scoped>
 .es-block {
     width: 100%;
+    height: 100%;
+}
+
+.demo-tabs>.el-tabs__content {
+    padding: 32px;
+    color: #6b778c;
+    font-size: 32px;
+    font-weight: 600;
+    height: auto;
+}
+
+.el-tabs--right .el-tabs__content,
+.el-tabs--left .el-tabs__content {
     height: 100%;
 }
 </style>

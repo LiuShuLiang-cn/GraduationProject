@@ -75,6 +75,7 @@ const options = computed(() => {
                 }
             ]
         }
+        // @ts-ignore
         res.push(data);
     })
     return res;
