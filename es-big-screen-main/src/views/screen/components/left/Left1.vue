@@ -2,7 +2,7 @@
     <div class="es-block">
         <Title>地区销量趋势</Title>
         <div style="width: 100%;height: 90%;">
-            <Chart :option="option" />
+            <Chat></Chat> <!-- <Chart :option="option" /> -->
         </div>
     </div>
 </template>
@@ -10,6 +10,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import Title from '../Title.vue'
+import Chat from '@/components/message/chat.vue'
 import Chart from '@/components/chart/Chart.vue'
 import allData from '@/assets/data/trend.json'
 import * as echarts from 'echarts'
