@@ -2,96 +2,63 @@
     <div class="es-block">
         <Title>警力分布</Title>
         <div style="width: 100%;height: 90%;">
-            <el-tabs :tab-position="'left'" class="demo-tabs">
-                <el-tab-pane label="User">User</el-tab-pane>
-                <el-tab-pane label="Config">Config</el-tab-pane>
-                <el-tab-pane label="Role">Role</el-tab-pane>
-                <el-tab-pane label="Task">Task</el-tab-pane>
+            <el-tabs :tab-position="'top'" class="demo-tabs">
+                <el-tab-pane label="status">
+                    <div class="art-text" v-if="operate.statusActivity == '0'">活动尚未开始</div>
+                    <fountion v-if="operate.statusActivity == '1'"></fountion>
+
+                </el-tab-pane>
+                <el-tab-pane label="Bus" class="vertical-fullscreen">
+                    <div class="left-column">
+                        <el-text class="m-1 text-box " type="success" size="large">
+                            公交A:{{ operate.busA === '1' ? '开启' : '关闭' }}
+                        </el-text><br>
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            公交B:{{ operate.busB === '1' ? '开启' : '关闭' }}
+                        </el-text>
+                    </div>
+                    <div class="right-column">
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            公交C:{{ operate.busC === '1' ? '开启' : '关闭' }}
+                        </el-text><br>
+                        <el-text class=" m-1 text-box" type="success" size="large">
+                            公交D:{{ operate.busD === '1' ? '开启' : '关闭' }}
+                        </el-text>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="Subway" class="vertical-fullscreen">
+                    <div class="left-column">
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            地铁A:{{ operate.subwayA === '1' ? '开启' : '关闭' }}
+                        </el-text><br>
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            地铁B:{{ operate.subwayB === '1' ? '开启' : '关闭' }}
+                        </el-text>
+                    </div>
+                    <div class="right-column">
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            地铁C:{{ operate.subwayC === '1' ? '开启' : '关闭' }}
+                        </el-text>
+                    </div>
+                </el-tab-pane>
             </el-tabs>
-            <!-- <Chart :option="option" /> -->
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue'
+import { ref, computed, ComputedRef } from 'vue'
+import { OperateInfo } from '@/api/websocket';
 import Title from '../Title.vue'
-import Chart from '@/components/chart/Chart.vue'
-import allData from '@/assets/data/stock.json'
-import * as echarts from 'echarts'
-import { ElTabPane, ElTabs } from 'element-plus'
-const currentIndex = ref(0)
-const option = ref({
-    series: getSeries()
+import { ElTabPane, ElTabs, ElText } from 'element-plus'
+import { useWebsocketStore } from '@/store/websocket';
+import fountion from '@/components/music/fountion.vue'
+const websocketStore = useWebsocketStore();
+websocketStore.operate.statusActivity
+const operate: ComputedRef<OperateInfo> = computed(() => {
+    return websocketStore.operate;
+
 })
-
-function getSeries() {
-    const centerArr = [
-        ['18%', '40%'],
-        ['50%', '40%'],
-        ['82%', '40%'],
-        ['34%', '75%'],
-        ['66%', '75%']
-    ]
-    const colorArr = [
-        ['#4FF778', '#0BA82C'],
-        ['#E5DD45', '#E8B11C'],
-        ['#E8821C', '#E55445'],
-        ['#5052EE', '#AB6EE5'],
-        ['#23E5E5', '#2E72BF']
-    ]
-    // 处理图表需要的数据
-    const start = currentIndex.value * 5
-    const end = (currentIndex.value + 1) * 5
-    const showData = allData.slice(start, end)
-
-    const titleFontSize = 460 / 100 * 3.6
-    const innerRadius = titleFontSize * 2.8
-    const outterRadius = innerRadius * 1.125
-
-    return showData.map((item, index) => {
-        return {
-            type: 'pie',
-            center: centerArr[index],
-            radius: [outterRadius, innerRadius],
-            emphasis: {
-                scale: false
-            },
-            labelLine: {
-                show: false // 隐藏指示线
-            },
-            data: [
-                {
-                    name: item.name + '\n\n' + item.sales,
-                    value: item.sales,
-                    itemStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                            {
-                                offset: 0,
-                                color: colorArr[index][0]
-                            },
-                            {
-                                offset: 1,
-                                color: colorArr[index][1]
-                            }
-                        ])
-                    },
-                    label: {
-                        position: 'center',
-                        color: colorArr[index][0],
-                        fontSize: titleFontSize / 2
-                    }
-                },
-                {
-                    value: item.stock,
-                    itemStyle: {
-                        color: '#333843'
-                    }
-                }
-            ]
-        }
-    })
-}
 
 </script>
 
@@ -101,7 +68,11 @@ function getSeries() {
     height: 100%;
 }
 
-.demo-tabs>.el-tabs__content {
+.demo-tabs {
+    height: 100%;
+}
+
+.el-tabs__content {
     padding: 32px;
     color: #6b778c;
     font-size: 32px;
@@ -112,5 +83,56 @@ function getSeries() {
 .el-tabs--right .el-tabs__content,
 .el-tabs--left .el-tabs__content {
     height: 100%;
+}
+
+.art-text {
+    /* 这里添加你需要的艺术字样式 */
+    font-size: 30px;
+    font-weight: bold;
+    color: #ff0000;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.vertical-fullscreen {
+    display: flex;
+    justify-content: center;
+    /* This will place the two columns at the far edges of the container */
+    padding: 20px;
+}
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    margin-right: 30px;
+    /* This will distribute space evenly between the two el-text elements */
+}
+
+.text-box {
+
+    border: 2px solid #42b983;
+    /* Element UI 主题色边框 */
+    border-radius: 8px;
+    /* 圆角边框 */
+    padding: 10px 20px;
+    /* 内部填充 */
+    margin: 10px 0;
+    /* 防止文本相互紧贴 */
+    background-color: #f0f9eb;
+    /* 轻淡的背景色 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* 轻微的阴影以创建层次感 */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    /* 平滑的过渡效果 */
+}
+
+.text-box:hover {
+    transform: translateY(-5px);
+    /* 鼠标悬停时轻微上移 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* 提升阴影以获得更强的层次感 */
 }
 </style>
