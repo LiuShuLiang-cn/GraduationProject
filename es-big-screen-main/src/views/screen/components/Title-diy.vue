@@ -15,7 +15,7 @@ defineProps({
 <style lang='scss' scoped>
 .es-screen-title {
     position: relative;
-    padding-left: 20px;
+    padding-left: 10px;
 
     &::before {
         content: '';
