@@ -10,18 +10,15 @@
             <!-- 第一行：消息文本输入区域和消息类型选择 -->
             <div class="input-row">
                 <textarea v-model="messageText"></textarea>
-                <select v-model="messageType">
-                    <option value="text">文本</option>
-                    <option value="image">图片</option>
-                    <option value="video">视频</option>
+                <select v-model="msgType">
+                    <option v-for="item in msgTypes" :key="item.value" :label="item.label" :value="item.value">文本
+                    </option>
                 </select>
             </div>
             <!-- 第二行：发送对象选择和发送按钮 -->
             <div class="input-row">
-                <select v-model="recipient">
-                    <option value="user1">用户1</option>
-                    <option value="user2">用户2</option>
-                    <option value="group1">群组1</option>
+                <select v-model="toRole">
+                    <option v-for="item in toRoles" :key="item.value" :label="item.label" :value="item.value" />
                 </select>
                 <button @click="sendMessage">发送</button>
             </div>
@@ -29,84 +26,113 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, nextTick } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, nextTick } from "vue";
+import { ElMessage } from 'element-plus';
+import { ChatInfo } from '@/api/chat';
+import { websocket, connectWebSocket } from '@/utils/websocket';
 
-export default defineComponent({
-    name: "ChatWindow",
-    setup() {
-        const messages = ref<
-            Array<{ from: string; text: string; fromMe?: boolean }>
-        >([]);
-        const messageText = ref<string>("");
-        const bol = ref(false);
+const messages = ref<Array<ChatInfo>>([]);
+const messageText = ref<string>("");
+const bol = ref(false);
+const toRoles = ref()
+const toRole = ref('')
+const msgTypes = ref([{ value: "1", label: "指令" }, { value: "2", label: "普通消息" }, { value: "3", label: "群发" }])
+const msgType = ref()
+function sendMessage() {
+    if (messageText.value) {
+        if (bol.value) {
+            return;
+        }
+        bol.value = true;
+        const newMessage = {
+            from: "Me",
+            text: "",
+            fromMe: true,
+        };
 
-        function sendMessage() {
-            if (messageText.value) {
-                if (bol.value) {
+        const newMessage1 = {
+            from: "You",
+            text: "狗",
+            fromMe: false,
+        };
+
+        messages.value.push(newMessage1);
+        messages.value.push(newMessage);
+        const originalText = messageText.value;
+
+        scrollToBottom(); // 先滚动到底部
+
+        nextTick(() => {
+            // 定时器每200ms将消息一个一个字符地显示出来
+            let currentIndex = 0;
+            const timer = setInterval(() => {
+                if (currentIndex >= originalText.length) {
+                    clearInterval(timer);
+                    nextTick(() => {
+                        newMessage.text = originalText;
+                        scrollToBottom(); // 再次滚动到底部
+                        bol.value = false;
+                    });
                     return;
                 }
-                bol.value = true;
-                const newMessage = {
-                    from: "Me",
-                    text: "",
-                    fromMe: true,
-                };
+                const currentText = originalText.substring(0, currentIndex + 1);
+                messages.value[messages.value.length - 1].text = currentText;
+                scrollToBottom(); // 再次滚动到底部
+                currentIndex++;
+            }, 200);
+        });
+    }
+}
 
-                const newMessage1 = {
-                    from: "You",
-                    text: "狗",
-                    fromMe: false,
-                };
-
-                messages.value.push(newMessage1);
-                messages.value.push(newMessage);
-                const originalText = messageText.value;
-                // messageText.value = "";
-
-                scrollToBottom(); // 先滚动到底部
-                // 等待滚动到底部后再依次显示消息
-                nextTick(() => {
-                    // 定时器每200ms将消息一个一个字符地显示出来
-                    let currentIndex = 0;
-                    const timer = setInterval(() => {
-                        if (currentIndex >= originalText.length) {
-                            clearInterval(timer);
-                            nextTick(() => {
-                                newMessage.text = originalText;
-                                scrollToBottom(); // 再次滚动到底部
-                                bol.value = false;
-                            });
-                            return;
-                        }
-                        const currentText = originalText.substring(0, currentIndex + 1);
-                        messages.value[messages.value.length - 1].text = currentText;
-                        scrollToBottom(); // 再次滚动到底部
-                        currentIndex++;
-                    }, 200);
-                });
+function scrollToBottom() {
+    const chatLog = document.getElementById("chat-log");
+    if (chatLog) {
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+}
+function initWebSocket() {
+    connectWebSocket("ws:/127.0.0.1:8015/websocket/" + '25' + '/' + '指挥中心')
+    websocket.onopen = function (event: any) {
+        websocket.onopen = function (event: any) {
+            ElMessage({ message: '连接成功', type: 'success' })
+            var msg: ChatInfo = {
+                id: String(25),
+                fromRole: String(''),
+                systemName: '',
+                statue: '0',
+                toRole: toRole.value,
+                type: '4',
+                text: props.role + '上线了',
+                time: new Date().toString()
             }
+            websocket.send(JSON.stringify(msg))
         }
+    }
+    websocket.onmessage = function (event: any) {
+        const data: DataResponse = JSON.parse(event.data)
+        const numberOfPeopleList = data.numberOfPeopleList
+        websocketStore.updateDeployList(data.deployList)
+        websocketStore.updateNumberOfPeopleList(numberOfPeopleList)
+        websocketStore.updateOperate(data.operate)
 
-        function scrollToBottom() {
-            const chatLog = document.getElementById("chat-log");
-            if (chatLog) {
-                chatLog.scrollTop = chatLog.scrollHeight;
-            }
-        }
-
-        scrollToBottom(); // 初始化滚动到底部
-
-        return {
-            messages,
-            messageText,
-            sendMessage,
-            scrollToBottom,
-        };
-    },
-    mounted() {
-        this.scrollToBottom(); // 每次更新聊天记录后滚动到底部
-    },
+    }
+}
+onMounted(() => {
+    var r = [
+        { value: "指挥中心", label: "指挥中心" },
+        { value: "主办单位", label: "主办单位" },
+        { value: "公安", label: "公安" },
+        { value: "交警", label: "交警" },
+        { value: "城管", label: "城管" },
+        { value: "志愿者", label: "志愿者" },
+        { value: "市民", label: "市民" },
+        { value: "公交地铁", label: "公交地铁" },
+    ]
+    toRoles.value = r.filter(function (element) {
+        return element.label !== 'props.role';
+    });
+    scrollToBottom(); // 每次更新聊天记录后滚动到底部
 });
 </script>
 
