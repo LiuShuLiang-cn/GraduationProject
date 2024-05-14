@@ -105,7 +105,6 @@ const roles = ref([{
 }])
 const role = ref('')
 const emits = defineEmits(['update:IsShow'])
-
 import { ElNotification, ElMessage } from 'element-plus'
 async function login() {
     await axios.post("/user/login", {
@@ -125,13 +124,14 @@ async function login() {
             ElMessage(res.data)
         } else {
             route.push({
-                path: '/index',
+                path: '/screen',
                 query: {
                     userName: props.name,
                     role: role.value,
                     system: res.data
                 }
             })
+
         }
 
     })

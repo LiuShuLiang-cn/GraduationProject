@@ -2,7 +2,7 @@
     <div id="chat-window">
         <ul id="chat-log">
             <li v-for="(message, index) in messages" :key="index" :class="{ received: !message.fromMe }">
-                <div class="message-header">{{ message.from }}</div>
+                <div class="message-header">{{ message.fromRole }}</div>
                 <div class="message-body">{{ message.text }}</div>
             </li>
         </ul>
@@ -28,10 +28,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from "vue";
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { ChatInfo } from '@/api/chat';
-import { websocket, connectWebSocket } from '@/utils/websocket';
-
+import { connectWebSocket2, websocket2 } from '@/utils/websocket-2';
+const props = defineProps({
+    systemId: String,
+    role: String
+})
 const messages = ref<Array<ChatInfo>>([]);
 const messageText = ref<string>("");
 const bol = ref(false);
@@ -46,21 +49,18 @@ function sendMessage() {
         }
         bol.value = true;
         const newMessage = {
-            from: "Me",
-            text: "",
-            fromMe: true,
+            id: String(props.systemId),
+            fromRole: String(props.role),
+            toRole: toRole.value,
+            type: msgType.value,
+            text: messageText.value,
+            systemName: '',
+            statue: String(0),
+            time: new Date().toString()
         };
-
-        const newMessage1 = {
-            from: "You",
-            text: "狗",
-            fromMe: false,
-        };
-
-        messages.value.push(newMessage1);
         messages.value.push(newMessage);
         const originalText = messageText.value;
-
+        websocket2.send(JSON.stringify(newMessage))
         scrollToBottom(); // 先滚动到底部
 
         nextTick(() => {
@@ -91,34 +91,44 @@ function scrollToBottom() {
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 }
+import { useToDotStore } from "@/store/todo.ts";
+const todos = useToDotStore()
 function initWebSocket() {
-    connectWebSocket("ws:/127.0.0.1:8015/websocket/" + '25' + '/' + '指挥中心')
-    websocket.onopen = function (event: any) {
-        websocket.onopen = function (event: any) {
-            ElMessage({ message: '连接成功', type: 'success' })
-            var msg: ChatInfo = {
-                id: String(25),
-                fromRole: String(''),
-                systemName: '',
-                statue: '0',
-                toRole: toRole.value,
-                type: '4',
-                text: props.role + '上线了',
-                time: new Date().toString()
-            }
-            websocket.send(JSON.stringify(msg))
+    connectWebSocket2("ws:/127.0.0.1:8015/websocket/" + props.systemId + '/' + props.role)
+    websocket2.onopen = function (event: any) {
+        ElMessage({ message: '连接成功', type: 'success' })
+        var msg: ChatInfo = {
+            id: String(25),
+            fromRole: String(''),
+            systemName: '',
+            statue: '0',
+            toRole: toRole.value,
+            type: '4',
+            text: props.role + '上线了',
+            time: new Date().toString()
         }
+        console.log(websocket2)
+        websocket2.send(JSON.stringify(msg))
     }
-    websocket.onmessage = function (event: any) {
-        const data: DataResponse = JSON.parse(event.data)
-        const numberOfPeopleList = data.numberOfPeopleList
-        websocketStore.updateDeployList(data.deployList)
-        websocketStore.updateNumberOfPeopleList(numberOfPeopleList)
-        websocketStore.updateOperate(data.operate)
+    websocket2.onmessage = function (event: any) {
+        var msg: Chat = JSON.parse(event.data)
+        messages.value.push(msg)
+        if (msg.type == '1') {
+            // 指令
+            todos.addToDoList(msg)
+            ElNotification({
+                title: '消息',
+                message: '收到一条来自' + msg.fromRole + '的指令',
+                type: 'success',
+            })
+        } else if (msg.type == '4') {
+            ElMessage({ message: msg.text, type: 'success' })
+        }
 
     }
 }
 onMounted(() => {
+    console.log('组件传值：', props)
     var r = [
         { value: "指挥中心", label: "指挥中心" },
         { value: "主办单位", label: "主办单位" },
@@ -130,9 +140,10 @@ onMounted(() => {
         { value: "公交地铁", label: "公交地铁" },
     ]
     toRoles.value = r.filter(function (element) {
-        return element.label !== 'props.role';
+        return element.label !== props.role;
     });
     scrollToBottom(); // 每次更新聊天记录后滚动到底部
+    initWebSocket();
 });
 </script>
 

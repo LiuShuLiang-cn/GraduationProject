@@ -1,5 +1,5 @@
 <template>
-    <!-- <SeamlessScroll class="es-center-bottom">
+    <SeamlessScroll class="es-center-bottom" v-if="props.role == '指挥中心'">
         <div v-for="item, index in actions" class="es-bottom-item">
             <Title>{{ item.region }}</Title>
             <el-row class="item-container align-center" type="flex">
@@ -14,14 +14,14 @@
                 </el-col>
             </el-row>
         </div>
-    </SeamlessScroll> -->
-    <!-- <control style="width: 100%;height: 100%;" /> -->
-    <control2 style="width: 100%;height: 100%;" />
+    </SeamlessScroll>
+    <control style="width: 100%;height: 100%;" v-if="role == '公安' || role == '交警' || role == '志愿者' || role == '城管'" />
+    <control2 v-if="props.role == '市民'" style="width: 100%;height: 100%;" />
 </template>
-
+<!-- todo 缺少主办单位和公交地铁 -->
 <script setup lang='ts'>
 // TODO 把各区域人数也加
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, defineProps } from 'vue'
 import control from "@/components/control/index-01.vue";
 import control2 from "@/components/control/index-02.vue";
 import Title from '../Title-diy.vue'
@@ -29,6 +29,11 @@ import 'odometer/themes/odometer-theme-default.css'
 import SeamlessScroll from '@/components/SeamlessScroll.vue'
 import { useWebsocketStore } from '@/store/websocket'
 type Coordinates = string; // 使用字符串"纬度,经度"作为键
+const props = defineProps({
+    systemId: String,
+    role: String
+})
+
 const locationMap: Map<Coordinates, string> = new Map([
     ["120.160988,30.257241", "钱塘里"],
     ["120.163306,30.256641", "长生里"],

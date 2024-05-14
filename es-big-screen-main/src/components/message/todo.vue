@@ -1,7 +1,7 @@
 <template>
     <div id="todo">
         <ul v-if="tasks.length > 0" class="task-list">
-            <li v-for="(task, index) in tasks" :key="index" class="task-item">
+            <li v-for="(task, index) in todos" :key="index" class="task-item">
                 <!-- <span class="task-text">{{ task.text }}——{{ task.fromRole }}</span>
                 <el-button type="danger" @click="removeTodo(index)">删除</el-button> -->
                 <div class="content">
@@ -23,7 +23,8 @@ import { Message } from "@/api.message";
 import axios from 'axios'
 const newTask = ref('');
 const tasks = ref<Message[]>([]);
-
+import { useToDotStore } from "@/store/todo.ts";
+const todos = useToDotStore()
 onMounted(() => {
     axios.get("/command", {
         params: {
@@ -39,7 +40,7 @@ onMounted(() => {
                 type: 'warning',
             })
         }
-        tasks.value = res.data
+        todos.updateToDo(res.data)
     })
 })
 

@@ -8,14 +8,17 @@
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
 import Title from '../Title.vue'
 import Chart from '@/components/chart/Chart.vue'
 import * as echarts from 'echarts'
 import { useWebsocketStore } from '@/store/websocket'
 import { NumberOfPeopleItem } from '@/api/websocket'
 const webSocketStore = useWebsocketStore()
-
+const props = defineProps({
+    systemId: String,
+    role: String
+})
 let x: number = 0
 let xData = []
 let yData = [

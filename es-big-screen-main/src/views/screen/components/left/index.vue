@@ -1,14 +1,13 @@
 <template>
     <div ref="containerRef">
-        <component v-for="item in components" :key="item.name" :is="item.component" class="es-screen-left-item"
-            :name="item.name">
-            <!-- <Left1 /> -->
+        <component v-for="item in components" :key="item.name" :is="item.component" v-bind="user"
+            class="es-screen-left-item" :name="item.name">
         </component>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { shallowRef } from 'vue'
+import { shallowRef, defineProps } from 'vue'
 import { useSortable } from '@/utils/useSortable'
 import Left1 from './Left1.vue'
 import Left2 from './Left2.vue'
@@ -16,7 +15,14 @@ const components = shallowRef([
     { name: 'left1', component: Left1 },
     { name: 'left2', component: Left2 }
 ])
-
+const props = defineProps({
+    systemId: String,
+    role: String
+})
+const user = {
+    systemId: props.systemId,
+    role: props.role
+}
 const { containerRef } = useSortable(components)
 </script>
 

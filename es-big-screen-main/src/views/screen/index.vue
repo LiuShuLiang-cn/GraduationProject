@@ -4,13 +4,13 @@
             <Header />
             <div class="es-screen-main">
                 <div class="es-screen-left">
-                    <Right />
+                    <Right :systemId="systemId" :role="role" />
                 </div>
                 <div class="es-screen-center">
-                    <Center />
+                    <Center :systemId="systemId" :role="role" />
                 </div>
                 <div class="es-screen-right">
-                    <Left />
+                    <Left :systemId="systemId" :role="role" />
                 </div>
             </div>
         </div>
@@ -25,6 +25,7 @@ import Left from './components/left/index.vue'
 import Right from './components/right/index.vue'
 import Center from './components/center/index.vue'
 import { useScreenStore } from '@/store'
+import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 const store = useScreenStore()
 const { screenRef } = useResize()
@@ -33,15 +34,23 @@ import { useWebsocketStore } from '@/store/websocket'
 const websocketStore = useWebsocketStore()
 import { ElMessage } from 'element-plus'
 import { DataResponse } from '@/api/websocket'
+const route = useRoute()
+const router = useRouter()
+const userName = route.query.userName
+const systemId = route.query.system
+const role = route.query.role
+import axios from 'axios';
 onMounted(() => {
-    initWebSocket()
+    axios.get("/data/" + systemId).then((res) => {
+    })
+    initWebSocket(systemId, role);
 })
 
-function initWebSocket() {
-    connectWebSocket("ws:/127.0.0.1:8015/websocket/data/" + '25' + '/' + '指挥中心')
+function initWebSocket(systemId: string, role: string) {
+    connectWebSocket("ws:/127.0.0.1:8015/websocket/data/" + systemId + '/' + role)
     websocket.onopen = function (event: any) {
-        ElMessage({ message: '数据传输通道建立', type: 'success' })
-        console.log(event)
+        // ElMessage({ message: '数据传输通道建立', type: 'success' })
+        // console.log(event)
     }
     websocket.onmessage = function (event: any) {
         const data: DataResponse = JSON.parse(event.data)

@@ -2,9 +2,8 @@
     <div class="es-center">
         <div class="es-center-top">
             <AMap />
-            <!-- <Map /> -->
         </div>
-        <Bottom />
+        <Bottom :systemId="props.systemId" :role="props.role" />
 
     </div>
 </template>
@@ -13,6 +12,12 @@
 import Map from './Map.vue'
 import AMap from './AMap.vue'
 import Bottom from './Bottom.vue'
+import { ref, onMounted, computed, defineProps } from 'vue'
+const props = defineProps({
+    systemId: String,
+    role: String
+})
+
 </script>
 
 <style lang='scss' scoped>

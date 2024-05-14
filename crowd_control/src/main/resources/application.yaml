@@ -2,10 +2,10 @@ logging:
   level:
     com:
       baomidou:
-        mybatisplus: debug
+        mybatisplus: error
     org:
       zucc:
-        dao: debug
+        dao: error
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
@@ -19,7 +19,7 @@ spring:
     timeout: 5000
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: admin
+    password: 123456
     url: jdbc:mysql://localhost:3306/crowd_control?serverTimezone=UTC&useSSl=true&useUnicode=true&characterEncoding=UTF-8
     username: root
   mvc:
