@@ -1,10 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Screen from '@/views/screen/index.vue'
 import Map from '@/views/screen/components/center/AMap.vue'
+import Login from '@/views/screen/login.vue'
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/screen'
+        redirect: '/login'
     },
     {
         path: '/screen',
@@ -13,6 +14,9 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/map',
         component: Map
+    }, {
+        path: '/login',
+        component: Login
     }
 ]
 

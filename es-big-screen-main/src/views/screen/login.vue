@@ -1,7 +1,8 @@
 <script setup name="LoginRegister" lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import LoginDialog from '@/components/dialog/LoginDialog.vue'
+import LoginDialog from '@/components/dialog/loginDialog.vue'
+import { ElForm, ElInput, ElButton } from "element-plus";
 
 // 响应式变量来控制弹窗的显示
 const isVisible = ref(false);
@@ -179,7 +180,7 @@ async function submitSignUp() {
 }
 
 .overlay {
-    background: var(--lightblue) url("../../assets/images/loginbg.jpg") no-repeat fixed center;
+    background: var(--lightblue) url("") no-repeat fixed center;
     background-size: cover;
     height: 100%;
     left: -100%;

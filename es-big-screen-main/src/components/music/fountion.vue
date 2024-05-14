@@ -10,7 +10,7 @@ import { ref } from 'vue'
 // 视频链接地址
 // https://www.bilibili.com/video/BV13X4y1E7N9/?spm_id_from=..search-card.all.click
 // https://snapany.com/zh/bilibili
-const videoSrc = ref('https://upos-sz-mirrorali.bilivideo.com/upgcxcode/56/03/1209970356/1209970356-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1715596784&gen=playurlv2&os=alibv&oi=17621919&trid=331540f0fcdb40c58b38ad3b27dcdc49h&mid=0&platform=html5&upsig=cf9e54759990b5754d96d14561967b7a&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&bvc=vod&nettype=0&f=h_0_0&bw=51000&logo=80000000');
+const videoSrc = ref('https://upos-sz-mirrorcos.bilivideo.com/upgcxcode/56/03/1209970356/1209970356-1-192.mp4?e=ig8euxZM2rNcNbNV7bdVhwdlhbdjhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1715612620&gen=playurlv2&os=bcache&oi=2584261250&trid=00002ded54877df1432a9ddee7336d06940eO&mid=0&platform=html5&upsig=84cd6eb031cd4776ea7883bab87d7316&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&cdnid=7269&bvc=vod&nettype=1&orderid=0,3&buvid=&build=7330300&f=O_0_0&bw=206921&logo=80000000');
 // 视频播放器配置
 let playerOptions = ref({
     height: 200,

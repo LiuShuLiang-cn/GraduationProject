@@ -1,5 +1,5 @@
 <template>
-    <SeamlessScroll class="es-center-bottom">
+    <!-- <SeamlessScroll class="es-center-bottom">
         <div v-for="item, index in actions" class="es-bottom-item">
             <Title>{{ item.region }}</Title>
             <el-row class="item-container align-center" type="flex">
@@ -14,12 +14,16 @@
                 </el-col>
             </el-row>
         </div>
-    </SeamlessScroll>
+    </SeamlessScroll> -->
+    <!-- <control style="width: 100%;height: 100%;" /> -->
+    <control2 style="width: 100%;height: 100%;" />
 </template>
 
 <script setup lang='ts'>
 // TODO 把各区域人数也加
 import { ref, onMounted, computed } from 'vue'
+import control from "@/components/control/index-01.vue";
+import control2 from "@/components/control/index-02.vue";
 import Title from '../Title-diy.vue'
 import 'odometer/themes/odometer-theme-default.css'
 import SeamlessScroll from '@/components/SeamlessScroll.vue'
@@ -55,15 +59,12 @@ const actions = ref([
 ])
 const websocketStore = useWebsocketStore();
 const deploys = computed(() => {
+    console.log("变化")
     return websocketStore.deployList;
 })
 onMounted(() => {
-    console.log(deploys)
-    // 遍历actions数组，根据deploys数组更新actions数组
     actions.value = actions.value.map(action => {
-        // 查找具有相同region的deploy对象
         const matchingDeploy = deploys.value.find(deploy => getRegionNameByCoordinates(deploy.cgLng, deploy.cgLat) === action.region);
-        console.log(matchingDeploy)
         if (matchingDeploy) {
             return {
                 color: action.color || 'defaultColor',
@@ -75,7 +76,6 @@ onMounted(() => {
                 region: action.region
             };
         }
-        // 如果没有找到，不修改action对象
         return action;
     });
     console.log(actions.value)
