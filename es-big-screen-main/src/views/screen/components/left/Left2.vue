@@ -1,21 +1,21 @@
 <template>
     <div class="es-block">
-        <Title>商家销售统计</Title>
+        <Title>代办列表</Title>
         <div style="width: 100%;height: 90%;">
-            <ToDo />
+            <ToDo :systemId="props.systemId" :role="props.role" />
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue'
+import { defineProps } from 'vue'
 import Title from '../Title.vue'
-import Chart from '@/components/chart/Chart.vue'
-import allData from '@/assets/data/seller.json'
-import * as echarts from 'echarts'
 import ToDo from "@/components/message/todo.vue";
 
-
+const props = defineProps({
+    systemId: String,
+    role: String
+})
 </script>
 
 <style lang='scss' scoped>

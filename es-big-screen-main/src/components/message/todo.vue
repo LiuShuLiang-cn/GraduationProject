@@ -1,14 +1,14 @@
 <template>
     <div id="todo">
         <ul v-if="tasks.length > 0" class="task-list">
-            <li v-for="(task, index) in todos" :key="index" class="task-item">
+            <li v-for="(task, index) in tasks" :key="index" class="task-item">
                 <!-- <span class="task-text">{{ task.text }}——{{ task.fromRole }}</span>
                 <el-button type="danger" @click="removeTodo(index)">删除</el-button> -->
                 <div class="content">
                     <span class="task-text">{{ task.text }}——{{ task.fromRole }}</span>
                 </div>
                 <div class="actions">
-                    <el-button type="danger" class="delete-button" @click="removeTodo(index)">删除</el-button>
+                    <el-button type="danger" class="delete-button" @click="removeTodo(task)">删除</el-button>
                 </div>
             </li>
         </ul>
@@ -17,19 +17,23 @@
 
 <script lang="ts" setup>
 
-import { defineComponent, ref, onMounted } from 'vue';
-import { ElButton, ElInput, ElNotification } from 'element-plus'
-import { Message } from "@/api.message";
+import { onMounted, computed, defineProps } from 'vue';
+import { ElButton, ElNotification } from 'element-plus'
 import axios from 'axios'
-const newTask = ref('');
-const tasks = ref<Message[]>([]);
-import { useToDotStore } from "@/store/todo.ts";
+import { ChatInfo } from '@/api/chat';
+const tasks = computed(() => { return todos.todoList });
+import { useToDotStore } from "@/store/todo";
 const todos = useToDotStore()
+import { websocket2 } from '@/utils/websocket-2';
+const props = defineProps({
+    systemId: String,
+    role: String
+})
 onMounted(() => {
     axios.get("/command", {
         params: {
-            systemId: '25',
-            roleTopic: '公安'
+            systemId: props.systemId,
+            roleTopic: props.role
         }
     }).then((res) => {
         console.log(res.data)
@@ -43,7 +47,25 @@ onMounted(() => {
         todos.updateToDo(res.data)
     })
 })
-
+function removeTodo(task: ChatInfo) {
+    // todo 自动回复完成的任务
+    // websocket2.send()
+    axios.get("/command/success/" + task.id).then((res) => {
+        ElNotification({
+            title: 'Success',
+            message: res.data,
+            type: 'success',
+        })
+        axios.get("/command", {
+            params: {
+                systemId: props.systemId,
+                roleTopic: props.role
+            }
+        }).then((res) => {
+            todos.updateToDo(res.data)
+        })
+    })
+}
 </script>
 
 <style scoped>

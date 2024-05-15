@@ -77,9 +77,6 @@ import axios from 'axios';
 import { ElDialog, ElButton, ElSelect, ElOption } from "element-plus";
 import { useRouter } from "vue-router";
 const route = useRouter()
-function CloseDia() {
-    emits('update:IsShow', false)
-}
 const props = defineProps(['IsShow', 'name', 'pwd'])
 const system = ref('')
 const options = ref([{

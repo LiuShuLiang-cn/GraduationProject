@@ -1,15 +1,15 @@
 // store/peopleStore.js
 import { defineStore } from 'pinia';
-import { Message } from '@/api/message'
+import { ChatInfo } from '@/api/chat'
 export const useToDotStore = defineStore('message', {
     state: () => ({
-        todoList: [] as Message[],
+        todoList: [] as ChatInfo[],
     }),
     actions: {
-        addToDoList(message: Message) {
+        addToDoList(message: ChatInfo) {
             this.todoList.push(message);
         },
-        updateToDo(message: Message[]) {
+        updateToDo(message: ChatInfo[]) {
             this.todoList = message;
         }
     }

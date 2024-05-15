@@ -12,6 +12,7 @@ import org.zucc.service.ChatService;
 import org.zucc.service.SystemService;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,6 +39,9 @@ public class ChatServiceImpl extends ServiceImpl<ChatDao, Chat> implements ChatS
         String systemName = systemService.getById(systemId).getSystemName();
         List<Chat> chats = chatDao.getNoTODO(systemName, roleTopic);
         log.info("系统<"+systemId +">中角色<" + roleTopic + ">有" + chats.size() + "条记录未完成");
+        if (chats == null) {
+            return new ArrayList<Chat>();
+        }
         return chats;
     }
 

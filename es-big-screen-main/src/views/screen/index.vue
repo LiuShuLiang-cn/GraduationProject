@@ -35,22 +35,19 @@ const websocketStore = useWebsocketStore()
 import { ElMessage } from 'element-plus'
 import { DataResponse } from '@/api/websocket'
 const route = useRoute()
-const router = useRouter()
-const userName = route.query.userName
+
 const systemId = route.query.system
 const role = route.query.role
 import axios from 'axios';
 onMounted(() => {
-    axios.get("/data/" + systemId).then((res) => {
-    })
+    //@ts-ignore
     initWebSocket(systemId, role);
 })
 
 function initWebSocket(systemId: string, role: string) {
     connectWebSocket("ws:/127.0.0.1:8015/websocket/data/" + systemId + '/' + role)
     websocket.onopen = function (event: any) {
-        // ElMessage({ message: '数据传输通道建立', type: 'success' })
-        // console.log(event)
+        console.log('数据传输通道建立', event)
     }
     websocket.onmessage = function (event: any) {
         const data: DataResponse = JSON.parse(event.data)
@@ -58,7 +55,15 @@ function initWebSocket(systemId: string, role: string) {
         websocketStore.updateDeployList(data.deployList)
         websocketStore.updateNumberOfPeopleList(numberOfPeopleList)
         websocketStore.updateOperate(data.operate)
-
+    }
+    // todo 有待完善，并未实现
+    websocket.onclose = function (event: any) {
+        axios.get('/user/logout', {
+            params: {
+                systemId: systemId,
+                role: role
+            }
+        })
     }
 }
 

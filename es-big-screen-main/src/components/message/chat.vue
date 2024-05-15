@@ -1,7 +1,7 @@
 <template>
     <div id="chat-window">
         <ul id="chat-log">
-            <li v-for="(message, index) in messages" :key="index" :class="{ received: !message.fromMe }">
+            <li v-for="(message, index) in messages" :key="index" :class="{ received: message.fromRole != props.role }">
                 <div class="message-header">{{ message.fromRole }}</div>
                 <div class="message-body">{{ message.text }}</div>
             </li>
@@ -91,7 +91,7 @@ function scrollToBottom() {
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 }
-import { useToDotStore } from "@/store/todo.ts";
+import { useToDotStore } from "@/store/todo";
 const todos = useToDotStore()
 function initWebSocket() {
     connectWebSocket2("ws:/127.0.0.1:8015/websocket/" + props.systemId + '/' + props.role)
@@ -99,7 +99,7 @@ function initWebSocket() {
         ElMessage({ message: '连接成功', type: 'success' })
         var msg: ChatInfo = {
             id: String(25),
-            fromRole: String(''),
+            fromRole: String('系统'),
             systemName: '',
             statue: '0',
             toRole: toRole.value,
@@ -111,7 +111,7 @@ function initWebSocket() {
         websocket2.send(JSON.stringify(msg))
     }
     websocket2.onmessage = function (event: any) {
-        var msg: Chat = JSON.parse(event.data)
+        var msg: ChatInfo = JSON.parse(event.data)
         messages.value.push(msg)
         if (msg.type == '1') {
             // 指令
