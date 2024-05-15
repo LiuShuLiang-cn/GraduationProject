@@ -56,7 +56,6 @@ function initMap() {
         // END
 
     }).catch(e => {
-        console.log(e)
         ElMessage({
             message: '地图加载失败！',
             type: 'error',

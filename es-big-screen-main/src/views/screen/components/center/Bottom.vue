@@ -15,7 +15,8 @@
             </el-row>
         </div>
     </SeamlessScroll>
-    <control style="width: 100%;height: 100%;" v-if="role == '公安' || role == '交警' || role == '志愿者' || role == '城管'" />
+    <control style="width: 100%;height: 100%;" v-if="role == '公安' || role == '交警' || role == '志愿者' || role == '城管'"
+        :systemId="props.systemId" :role="props.role" />
     <control2 v-if="props.role == '市民'" style="width: 100%;height: 100%;" />
 </template>
 <!-- todo 缺少主办单位和公交地铁 -->
@@ -64,7 +65,6 @@ const actions = ref([
 ])
 const websocketStore = useWebsocketStore();
 const deploys = computed(() => {
-    console.log("变化")
     return websocketStore.deployList;
 })
 onMounted(() => {
@@ -83,7 +83,6 @@ onMounted(() => {
         }
         return action;
     });
-    console.log(actions.value)
 })
 </script>
 

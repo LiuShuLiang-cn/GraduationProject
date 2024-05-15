@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import Title from '../Title.vue'
 import Chart from '@/components/chart/Chart-div.vue'
 import { ElCarousel, ElCarouselItem } from 'element-plus'
@@ -34,8 +34,9 @@ function getRegionNameByCoordinates(lat: number, lng: number): string | undefine
     return locationMap.get(key);
 }
 const options = computed(() => {
-    const deploys = webSocketStore.deployList
+    const deploys = webSocketStore.deployList;
     let res = []
+    // console.log(deploys)
     deploys.forEach((element, index) => {
         const data = {
             grid: {
@@ -53,7 +54,7 @@ const options = computed(() => {
                 show: true,
                 formatter: arg => {
                     const thirdCategory = arg.data;
-                    let retStr = getRegionNameByCoordinates(deploys[index].cgLng, deploys[index].cgLat) + '地区的' + thirdCategory.name + ': ' + thirdCategory.value;
+                    let retStr = getRegionNameByCoordinates(element.cgLng, element.cgLat) + '地区的' + thirdCategory.name + ': ' + thirdCategory.value;
                     return retStr;
                 }
             },
@@ -71,7 +72,12 @@ const options = computed(() => {
                             show: false
                         }
                     },
-                    data: [{ name: '公安', value: element.cg }, { name: '交警', value: element.jj }, { name: '城管', value: element.cg }, { name: '志愿者', value: element.zyz }]
+                    data: [
+                        { name: '公安', value: element.ga },
+                        { name: '交警', value: element.jj },
+                        { name: '城管', value: element.cg },
+                        { name: '志愿者', value: element.zyz }
+                    ]
                 }
             ]
         }

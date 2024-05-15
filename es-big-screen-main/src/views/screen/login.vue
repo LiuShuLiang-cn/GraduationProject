@@ -43,9 +43,8 @@ async function submitSignUp() {
         userName: userName.value,
         password: password.value
     }).then((res) => {
-        console.log(res.data)
         if (res.data != 'success') {
-            alert(res.data)
+            ElMessage(res.data)
         } else {
             ElMessage({
                 message: '注册成功!',

@@ -34,7 +34,7 @@ function resize() {
     chart.value!.resize()
 }
 
-watch(() => props.option, () => {
+watch(() => props.option, (oldValue, newValue) => {
     setOption(props.option)
 })
 

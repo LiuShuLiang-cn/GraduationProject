@@ -107,7 +107,6 @@ function initWebSocket() {
             text: props.role + '上线了',
             time: new Date().toString()
         }
-        console.log(websocket2)
         websocket2.send(JSON.stringify(msg))
     }
     websocket2.onmessage = function (event: any) {
@@ -128,7 +127,6 @@ function initWebSocket() {
     }
 }
 onMounted(() => {
-    console.log('组件传值：', props)
     var r = [
         { value: "指挥中心", label: "指挥中心" },
         { value: "主办单位", label: "主办单位" },
