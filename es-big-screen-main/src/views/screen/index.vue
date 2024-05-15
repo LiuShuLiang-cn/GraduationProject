@@ -35,13 +35,16 @@ const websocketStore = useWebsocketStore()
 import { ElMessage } from 'element-plus'
 import { DataResponse } from '@/api/websocket'
 const route = useRoute()
-
+import axios from "axios";
 const systemId = route.query.system
 const role = route.query.role
-import axios from 'axios';
 onMounted(() => {
+    axios.get('/data/' + systemId).then((res) => {
+
+    })
     //@ts-ignore
     initWebSocket(systemId, role);
+
 })
 
 function initWebSocket(systemId: string, role: string) {

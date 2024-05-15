@@ -15,6 +15,19 @@ public class RoleUtils {
         roles.add(systemId + "-城管");
         roles.add(systemId + "-市民");
         roles.add(systemId + "-公交地铁");
+        roles.add(systemId + "-主办单位");
         return roles.stream().filter(e -> !(e.equals(systemId + "-" + role))).collect(Collectors.toList());
+    }
+    public static List<String> getAllRole(String systemId, String role) {
+        ArrayList<String> roles = new ArrayList<>();
+        roles.add(systemId + "-指挥中心");
+        roles.add(systemId + "-公安");
+        roles.add(systemId + "-交警");
+        roles.add(systemId + "-志愿者");
+        roles.add(systemId + "-城管");
+        roles.add(systemId + "-市民");
+        roles.add(systemId + "-公交地铁");
+        roles.add(systemId + "-主办单位");
+        return roles;
     }
 }

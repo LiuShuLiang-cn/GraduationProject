@@ -17,14 +17,22 @@
     </SeamlessScroll>
     <control style="width: 100%;height: 100%;" v-if="role == '公安' || role == '交警' || role == '志愿者' || role == '城管'"
         :systemId="props.systemId" :role="props.role" />
-    <control2 v-if="props.role == '市民'" style="width: 100%;height: 100%;" />
+    <control2 v-if="props.role == '市民'" style="width: 100%;height: 100%;" :systemId="props.systemId"
+        :role="props.role" />
+    <control3 v-if="props.role == '主办单位'" style="width: 100%;height: 100%;" :systemId="props.systemId"
+        :role="props.role" />
+    <control4 v-if="props.role == '公交地铁'" style="width: 100%;height: 100%;" :systemId="props.systemId"
+        :role="props.role" />
 </template>
 <!-- todo 缺少主办单位和公交地铁 -->
 <script setup lang='ts'>
 // TODO 把各区域人数也加
+
 import { ref, onMounted, computed, defineProps } from 'vue'
 import control from "@/components/control/index-01.vue";
 import control2 from "@/components/control/index-02.vue";
+import control3 from "@/components/control/index-03.vue";
+import control4 from "@/components/control/index-04.vue";
 import Title from '../Title-diy.vue'
 import 'odometer/themes/odometer-theme-default.css'
 import SeamlessScroll from '@/components/SeamlessScroll.vue'

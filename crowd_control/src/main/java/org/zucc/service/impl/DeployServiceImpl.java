@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.zucc.dao.DeployDao;
+import org.zucc.dao.NumberOfPeopleDao;
 import org.zucc.dao.SystemDao;
 import org.zucc.entity.Deploy;
 import org.zucc.entity.NumberOfPeople;
@@ -23,7 +24,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
     @Resource
     private DeployDao deployDao;
     @Resource
-    private RedisTemplate<String, List<Object>> redisTemplate;
+    private RedisTemplate redisTemplate;
     @Resource
     private NumberOfPeopleService numberOfPeopleService;
     @Resource
@@ -124,7 +125,11 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
             return e.getMessage();
         }
         redisTemplate.delete(systemName + "_NumberOfPeople");
+        List<NumberOfPeople> peoples = numberOfPeopleDao.getNumBySys(systemName);
+        redisTemplate.opsForValue().set(systemName + "_NumberOfPeople", peoples);
         return "转移成功！";
     }
 
+    @Resource
+    private NumberOfPeopleDao numberOfPeopleDao;
 }

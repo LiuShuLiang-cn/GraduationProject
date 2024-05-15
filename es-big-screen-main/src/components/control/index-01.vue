@@ -19,7 +19,7 @@
     </el-row>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import { ElCol, ElOption, ElSelect, ElButton, ElInputNumber, ElNotification } from "element-plus";
 const peoNum = ref()
 import axios from "axios";
