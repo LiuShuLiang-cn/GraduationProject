@@ -111,12 +111,16 @@ public class DeployServiceImpl extends ServiceImpl<DeployDao, Deploy> implements
         try {
             numberOfPeopleList.forEach(numberOfPeople -> {
                 if (numberOfPeople.getRegion().equals(from)) {
-                    if (numberOfPeople.getNumber() - number<0){
-                        throw new RuntimeException("输入的人数超出了转移的范围");
+                    if (from.equals(to)) {
+                        numberOfPeople.setNumber(numberOfPeople.getNumber() + number);
+                    }else {
+                        if (numberOfPeople.getNumber() - number<0){
+                            throw new RuntimeException("输入的人数超出了转移的范围");
+                        }
+                        numberOfPeople.setNumber(numberOfPeople.getNumber() - number);
                     }
-                    numberOfPeople.setNumber(numberOfPeople.getNumber() - number);
                     numberOfPeopleService.updateById(numberOfPeople);
-                } else if (numberOfPeople.getRegion().equals(to)) {
+                } else if (numberOfPeople.getRegion().equals(to)&&(!from.equals(to))) {
                     numberOfPeople.setNumber(numberOfPeople.getNumber() + number);
                     numberOfPeopleService.updateById(numberOfPeople);
                 }

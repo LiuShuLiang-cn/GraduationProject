@@ -481,7 +481,7 @@ function initMap() {
 			mapStyle: 'amap://styles/darkblue'
 		})
 	}).catch(e=>{
-		console.log(e);
+		console.log('初始化地图失败！');
 	})
 }
 

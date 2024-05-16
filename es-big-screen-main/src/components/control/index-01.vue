@@ -92,10 +92,25 @@ const addrs = ref<ADDR[]>([
     }
 ])
 import { useWebsocketStore } from "@/store/websocket";
+import { websocket2 } from "@/utils/websocket-2";
 const websocketStore = useWebsocketStore()
-
+const locationMap: Map<Coordinates, string> = new Map([
+    ["120.160988,30.257241", "钱塘里"],
+    ["120.163306,30.256641", "长生里"],
+    ["120.161679,30.256041", "劝业里"],
+    ["120.162178,30.254551", "学士里"],
+    ["120.163452,30.254666", "龙翔里"],
+    ["120.162555,30.252937", "仁和里"],
+    ["120.163585,30.252126", "东坡里"],
+    ["120.162707,30.249315", "将军里"],
+    ["120.165169,30.249562", "泗水里"],
+]);
+type Coordinates = string;
+function getRegionNameByCoordinates(lat: number, lng: number): string | undefined {
+    const key = `${lat.toFixed(6)},${lng.toFixed(6)}`; // 将经纬度格式化为字符串
+    return locationMap.get(key);
+}
 function BuShu() {
-    const parm = addrs.value[0].value
     axios.get("/directives/deploy", {
         params: {
             role: props.role,
@@ -105,7 +120,6 @@ function BuShu() {
             num: peoNum.value
         }
     }).then((res: any) => {
-        // TODO 部署成功之后在发送通知
         const old = websocketStore.deployList;
         // 查找匹配的元素索引
         const foundIndex = old.findIndex(item =>
@@ -130,6 +144,19 @@ function BuShu() {
             message: '部署成功',
             type: 'success',
         })
+        //@ts-ignore
+        const msg = getRegionNameByCoordinates(addr.value?.value.lng, addr.value?.value.lat)
+        const newMessage = {
+            id: String(),
+            fromRole: props.role,
+            toRole: String(),
+            type: '3',
+            text: '在' + msg + '部署了' + peoNum.value + '名' + props.role,
+            systemName: props.systemId,
+            statue: String(0),
+            time: new Date().toString()
+        };
+        websocket2.send(JSON.stringify(newMessage))
     })
 }
 </script>

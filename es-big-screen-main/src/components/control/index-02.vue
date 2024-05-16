@@ -96,7 +96,6 @@ const addrs = ref<ADDR[]>([
 ])
 const peoNum = ref()
 function ZhuanYi() {
-    console.log('11', props.systemId, from.value, to.value, peoNum.value)
     axios.get("/directives/trans", {
         params: {
             systemId: props.systemId,

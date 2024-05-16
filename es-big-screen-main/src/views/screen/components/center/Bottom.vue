@@ -24,10 +24,7 @@
     <control4 v-if="props.role == '公交地铁'" style="width: 100%;height: 100%;" :systemId="props.systemId"
         :role="props.role" />
 </template>
-<!-- todo 缺少主办单位和公交地铁 -->
 <script setup lang='ts'>
-// TODO 把各区域人数也加
-
 import { ref, onMounted, computed, defineProps } from 'vue'
 import control from "@/components/control/index-01.vue";
 import control2 from "@/components/control/index-02.vue";

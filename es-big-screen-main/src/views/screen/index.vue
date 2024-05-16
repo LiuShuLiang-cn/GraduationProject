@@ -1,7 +1,7 @@
 <template>
     <div :class="['es-screen-container', store.theme]">
         <div ref="screenRef" class="es-screen">
-            <Header />
+            <Header :systemId="systemId" :role="role" :name="userName" />
             <div class="es-screen-main">
                 <div class="es-screen-left">
                     <Right :systemId="systemId" :role="role" />
@@ -32,12 +32,13 @@ const { screenRef } = useResize()
 import { websocket, connectWebSocket } from "@/utils/websocket";
 import { useWebsocketStore } from '@/store/websocket'
 const websocketStore = useWebsocketStore()
-import { ElMessage } from 'element-plus'
 import { DataResponse } from '@/api/websocket'
 const route = useRoute()
 import axios from "axios";
+import { ElMessage } from 'element-plus'
 const systemId = route.query.system
 const role = route.query.role
+const userName = route.query.userName
 onMounted(() => {
     axios.get('/data/' + systemId).then((res) => {
 
@@ -55,12 +56,12 @@ function initWebSocket(systemId: string, role: string) {
     websocket.onmessage = function (event: any) {
         const data: DataResponse = JSON.parse(event.data)
         const numberOfPeopleList = data.numberOfPeopleList
-        websocketStore.updateDeployList(data.deployList)
+        websocketStore.updateDeployList(data.deployList.slice(0, 9))
         websocketStore.updateNumberOfPeopleList(numberOfPeopleList)
         websocketStore.updateOperate(data.operate)
     }
-    // todo 有待完善，并未实现
     websocket.onclose = function (event: any) {
+        ElMessage('断开连接了，请重新登录！')
         axios.get('/user/logout', {
             params: {
                 systemId: systemId,

@@ -36,7 +36,6 @@ onMounted(() => {
             roleTopic: props.role
         }
     }).then((res) => {
-        console.log(res.data)
         if (res.data.length != 0) {
             ElNotification({
                 title: 'Warning',
@@ -48,8 +47,6 @@ onMounted(() => {
     })
 })
 function removeTodo(task: ChatInfo) {
-    // todo 自动回复完成的任务
-    // websocket2.send()
     axios.get("/command/success/" + task.id).then((res) => {
         ElNotification({
             title: 'Success',
@@ -64,6 +61,17 @@ function removeTodo(task: ChatInfo) {
         }).then((res) => {
             todos.updateToDo(res.data)
         })
+
+        websocket2.send(JSON.stringify({
+            id: String(),
+            fromRole: props.role,
+            toRole: task.fromRole,
+            type: '2',
+            text: ' 完成了任务：' + task.text,
+            systemName: '',
+            statue: String(1),
+            time: new Date().toString()
+        }))
     })
 }
 </script>

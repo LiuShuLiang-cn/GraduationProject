@@ -82,21 +82,21 @@ function addPolygon(areas: Area[], MyAMap: typeof AMap) {
             path: element.path,
         });
         //鼠标移入更改样式
-        polygon.on("mouseover", () => {
-            polygon.setOptions({
-                fillOpacity: 0.7, //多边形填充透明度
-                fillColor: "#7bccc4",
-                cursor: 'pointer',
-            });
-        });
+        // polygon.on("mouseover", () => {
+        //     polygon.setOptions({
+        //         fillOpacity: 0.7, //多边形填充透明度
+        //         fillColor: "#7bccc4",
+        //         cursor: 'pointer',
+        //     });
+        // });
         //鼠标移出恢复样式
-        polygon.on("mouseout", () => {
-            polygon.setOptions({
-                fillOpacity: 0.5,
-                fillColor: "#ffeeff",
-                cursor: 'ani',
-            });
-        });
+        // polygon.on("mouseout", () => {
+        //     polygon.setOptions({
+        //         fillOpacity: 0.5,
+        //         fillColor: "#ffeeff",
+        //         cursor: 'ani',
+        //     });
+        // });
         // @ts-ignore
         MyAMap.add(polygon);
     })
@@ -118,7 +118,7 @@ function updataMarkerText(numberOfPeopleList: any, MyAMap: typeof AMap) {
                 "margin-bottom": "1rem",
                 "border-radius": ".25rem",
                 "background-color": "transparent",
-                "width": "5rem",
+                "width": "10rem",
                 "border-width": 0,
                 "text-align": "center",
                 "font-size": "20px",
@@ -133,7 +133,7 @@ function updataMarkerText(numberOfPeopleList: any, MyAMap: typeof AMap) {
                 ElMessage(lat, lng)
             };
         })(element.longitude, element.latitude));
-        text.setText(element.number)
+        text.setText(element.region + element.number)
         // @ts-ignore
         textsOnMap.push(text);
     });

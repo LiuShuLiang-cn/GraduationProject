@@ -11,48 +11,56 @@
         </el-col>
     </el-row>
 </template>
-
-
 <script setup lang="ts">
-import { ref, defineProps, computed } from "vue";
-import { ElSwitch, ElCol, ElSpace, ElOption, ElSelect, ElButton, ElInputNumber, ElNotification } from "element-plus";
+import { defineProps, computed } from "vue";
+import { ElSwitch, ElCol, ElNotification } from "element-plus";
 import { useWebsocketStore } from '@/store/websocket'
+import { websocket2 } from "@/utils/websocket-2";
 const websocketStore = useWebsocketStore();
 import axios from 'axios';
 const activateStatus = computed(() => {
-    return websocketStore.operate.statusActivity == 1 ? true : false
+    return websocketStore.operate.statusActivity == '1' ? true : false
 });
-// console.log("初始活动是否开启：", websocketStore.operate.statusActivity, activateStatus.value)
 const props = defineProps({
     systemId: String,
     role: String
 })
 function changeActivate(e: any, type: String) {
-    console.log('事件发生了变化：', e, '类型为：', type)
     var status = e ? 1 : 0
     axios.get("/operate/" + props.systemId + "/" + type + "/" + status).then((res) => {
         if (res.data == 'switch') {
             const data = websocketStore.operate;
-            data.activateStatus = status;
-            console.log(data)
+            data.statusActivity = String(status);
             websocketStore.updateOperate(data);
-            if (websocketStore.operate.activateStatus == 1 ? true : false) {
+
+            let msg = ''
+            if (websocketStore.operate.statusActivity == '1' ? true : false) {
                 ElNotification({
                     title: "success",
                     message: "活动开启",
                     type: 'success'
                 });
+                msg = '音乐活动开启了，大家快来玩！';
             } else {
                 ElNotification({
                     title: "success",
                     message: "活动关闭",
                     type: 'success'
                 });
+                msg = '音乐活动关闭了，请大家等待下次！';
             }
-
+            const newMessage = {
+                id: String(),
+                fromRole: props.role,
+                toRole: String(),
+                type: '3',
+                text: msg,
+                systemName: props.systemId,
+                statue: String(0),
+                time: new Date().toString()
+            };
+            websocket2.send(JSON.stringify(newMessage))
         }
-
-
     })
 }
 </script>

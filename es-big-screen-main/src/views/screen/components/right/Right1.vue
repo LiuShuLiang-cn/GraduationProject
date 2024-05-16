@@ -3,7 +3,7 @@
         <Title>活动与公交信息</Title>
         <el-carousel motion-blur indicator-position="none">
             <el-carousel-item v-for=" item in 9" :key="item">
-                <Chart :option="options[item]" style="width: 300px;" />
+                <Chart :option="options[item - 1]" style="width: 300px;" />
             </el-carousel-item>
         </el-carousel>
     </div>
@@ -36,8 +36,8 @@ function getRegionNameByCoordinates(lat: number, lng: number): string | undefine
 const options = computed(() => {
     const deploys = webSocketStore.deployList;
     let res = []
-    // console.log(deploys)
     deploys.forEach((element, index) => {
+
         const data = {
             grid: {
                 containLabel: false,
@@ -81,6 +81,7 @@ const options = computed(() => {
                 }
             ]
         }
+
         // @ts-ignore
         res.push(data);
     })
