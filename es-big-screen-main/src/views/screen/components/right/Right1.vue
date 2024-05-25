@@ -1,6 +1,6 @@
 <template>
     <div class="es-block">
-        <Title>活动与公交信息</Title>
+        <Title>警力分布</Title>
         <el-carousel motion-blur indicator-position="none">
             <el-carousel-item v-for=" item in 9" :key="item">
                 <Chart :option="options[item - 1]" style="width: 300px;" />

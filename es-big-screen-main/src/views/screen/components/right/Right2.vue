@@ -1,6 +1,6 @@
 <template>
     <div class="es-block">
-        <Title>警力分布</Title>
+        <Title>活动与公交信息</Title>
         <div style="width: 100%;height: 90%;">
             <el-tabs :tab-position="'top'" class="demo-tabs">
                 <el-tab-pane label="status">
@@ -38,6 +38,9 @@
                     <div class="right-column">
                         <el-text class="m-1 text-box" type="success" size="large">
                             地铁C:{{ operate.subwayC === '1' ? '开启' : '关闭' }}
+                        </el-text><br>
+                        <el-text class="m-1 text-box" type="success" size="large">
+                            地铁D:{{ operate.subwayD === '1' ? '开启' : '关闭' }}
                         </el-text>
                     </div>
                 </el-tab-pane>

@@ -117,7 +117,7 @@ public class PedestrianTask {
 
     /**
      * 根据比例转移人数
-     *
+     * TODO 权重设计重新
      * @param num        转移人数
      * @param systemName 系统名称
      */

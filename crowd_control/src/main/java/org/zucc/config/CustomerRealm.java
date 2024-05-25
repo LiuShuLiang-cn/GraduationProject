@@ -32,7 +32,6 @@ public class CustomerRealm extends AuthorizingRealm {
         /**
          *  授权
          * @author  LiuShuLiang
-         * @date    2023/4/27 10:46
          * @param   principals
          * @return  org.apache.shiro.authz.AuthorizationInfo
          */
@@ -51,7 +50,6 @@ public class CustomerRealm extends AuthorizingRealm {
         /**
          *  认证
          * @author  LiuShuLiang
-         * @date    2023/4/27 10:46
          * @param   token
          * @return  org.apache.shiro.authc.AuthenticationInfo
          */

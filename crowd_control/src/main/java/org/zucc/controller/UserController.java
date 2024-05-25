@@ -95,6 +95,7 @@ public class UserController {
     public String logout(@RequestParam("systemId") String systemId,@RequestParam("role")String role) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("systemname", systemId);
+        queryWrapper.eq("status", "1");
         List<User> userList = userService.list(queryWrapper);
         if (userList.size()==1){
             User user = userList.get(0);

@@ -10,10 +10,12 @@ import VueVideoPlayer from '@videojs-player/vue'
 import 'video.js/dist/video-js.css'
 axios.defaults.baseURL = 'http://127.0.0.1:8015'
 axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-
+// import { createPinia } from "pinia"
+// const pinia = createPinia()
 createApp(App)
     .use(chart)
     .use(VueVideoPlayer)
     .use(store)
+    // .use(pinia)
     .use(router)
     .mount('#app')

@@ -1,5 +1,6 @@
 <template>
-    <el-dialog :model-value="props.IsShow" title="请选择" width="30%" :before-close="handleClose">
+    <el-dialog :model-value="props.IsShow" title="请选择" width="30%">
+        <!-- :before-close="handleClose" -->
         <!-- 使用div来包裹slot内容，并为其添加一些样式 -->
         <div class="dialog-content">
             <div class="select-group">

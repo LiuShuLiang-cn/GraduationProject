@@ -52,7 +52,6 @@ function logout() {
     axios.get("/user/logout", {
         params: {
             systemId: props.systemId,
-            userName: props.name,
             role: props.role
         }
     }).then((res) => {

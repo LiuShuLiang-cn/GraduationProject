@@ -62,12 +62,12 @@ function initWebSocket(systemId: string, role: string) {
     }
     websocket.onclose = function (event: any) {
         ElMessage('断开连接了，请重新登录！')
-        axios.get('/user/logout', {
-            params: {
-                systemId: systemId,
-                role: role
-            }
-        })
+        // axios.get('/user/logout', {
+        //     params: {
+        //         systemId: systemId,
+        //         role: role
+        //     }
+        // })
     }
 }
 

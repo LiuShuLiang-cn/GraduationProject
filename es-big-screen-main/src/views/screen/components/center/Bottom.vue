@@ -1,6 +1,6 @@
 <template>
     <SeamlessScroll class="es-center-bottom" v-if="props.role == '指挥中心'">
-        <div v-for="item, index in actions" class="es-bottom-item">
+        <div v-for="item, index in actions2" class="es-bottom-item">
             <Title>{{ item.region }}</Title>
             <el-row class="item-container align-center" type="flex">
                 <el-col :span="2">
@@ -71,6 +71,23 @@ const actions = ref([
 const websocketStore = useWebsocketStore();
 const deploys = computed(() => {
     return websocketStore.deployList;
+})
+const actions2 = computed(() => {
+    return actions.value.map(action => {
+        const matchingDeploy = deploys.value.find(deploy => getRegionNameByCoordinates(deploy.cgLng, deploy.cgLat) === action.region);
+        if (matchingDeploy) {
+            return {
+                color: action.color || 'defaultColor',
+                icon: action.icon || 'defaultIcon',
+                ga_value: matchingDeploy.ga,
+                cg_value: matchingDeploy.cg,
+                jj_value: matchingDeploy.jj,
+                zyz_value: matchingDeploy.zyz,
+                region: action.region
+            };
+        }
+        return action;
+    });
 })
 onMounted(() => {
     actions.value = actions.value.map(action => {
